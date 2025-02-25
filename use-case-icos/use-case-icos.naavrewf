@@ -1,0 +1,383 @@
+{
+  "chart": {
+    "offset": {
+      "x": -36,
+      "y": 53
+    },
+    "scale": 1,
+    "nodes": {
+      "faaaef93-24be-42c1-9567-6c749849a2ba": {
+        "id": "faaaef93-24be-42c1-9567-6c749849a2ba",
+        "position": {
+          "x": 325.1000061035156,
+          "y": 75
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "stations_id_list": {
+            "properties": {
+              "color": "#ac6b53"
+            },
+            "id": "stations_id_list",
+            "type": "right",
+            "position": {
+              "x": 197.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "stations_id_list",
+              "direction": "output",
+              "type": "datatype",
+              "color": "#ac6b53"
+            }
+          ],
+          "params": [
+            "param_ecosystem_type"
+          ],
+          "secrets": [],
+          "inputs": [],
+          "outputs": [
+            "stations_id_list"
+          ],
+          "og_node_id": "7166a81"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      },
+      "5b940894-695c-4222-9fb8-4607df7f7477": {
+        "id": "5b940894-695c-4222-9fb8-4607df7f7477",
+        "position": {
+          "x": 1229.1000061035156,
+          "y": 79
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "dobj_list": {
+            "properties": {
+              "color": "#591f93"
+            },
+            "id": "dobj_list",
+            "type": "left",
+            "position": {
+              "x": 29.5,
+              "y": 74.5
+            }
+          },
+          "plot_files": {
+            "properties": {
+              "color": "#53ac5a"
+            },
+            "id": "plot_files",
+            "type": "right",
+            "position": {
+              "x": 216.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "dobj_list",
+              "direction": "input",
+              "type": "datatype",
+              "color": "#591f93"
+            },
+            {
+              "name": "plot_files",
+              "direction": "output",
+              "type": "datatype",
+              "color": "#53ac5a"
+            }
+          ],
+          "params": [
+            "param_cpauth_token",
+            "param_variable"
+          ],
+          "secrets": [],
+          "inputs": [
+            "dobj_list"
+          ],
+          "outputs": [
+            "plot_files"
+          ],
+          "og_node_id": "ccc5b54"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      },
+      "1950ddcc-c705-42de-8f93-e606b5e3ba09": {
+        "id": "1950ddcc-c705-42de-8f93-e606b5e3ba09",
+        "position": {
+          "x": 1783.1000061035156,
+          "y": 89
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "plot_files": {
+            "properties": {
+              "color": "#53ac5a"
+            },
+            "id": "plot_files",
+            "type": "left",
+            "position": {
+              "x": 31.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "use-case-icos-upload-files-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "plot_files",
+              "direction": "input",
+              "type": "datatype",
+              "color": "#53ac5a"
+            }
+          ],
+          "params": [
+            "param_s3_server",
+            "param_s3_bucket",
+            "param_s3_user_prefix",
+            "param_s3_access_key",
+            "param_s3_secret_key"
+          ],
+          "secrets": [],
+          "inputs": [
+            "plot_files"
+          ],
+          "outputs": [],
+          "og_node_id": "dc78d14"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      },
+      "997700ab-c6bd-4426-b298-66e31fbe907c": {
+        "id": "997700ab-c6bd-4426-b298-66e31fbe907c",
+        "position": {
+          "x": 984.1000061035156,
+          "y": 94
+        },
+        "orientation": 0,
+        "type": "splitter",
+        "ports": {
+          "splitter_source": {
+            "id": "splitter_source",
+            "type": "left",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 0.5,
+              "y": 49.5
+            }
+          },
+          "splitter_target": {
+            "id": "splitter_target",
+            "type": "right",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 197.5,
+              "y": 49.5
+            }
+          }
+        },
+        "properties": {
+          "title": "Splitter",
+          "scalingFactor": 1
+        },
+        "size": {
+          "width": 200,
+          "height": 100
+        }
+      },
+      "1dd67ca9-9be4-4e3b-a2b9-c568d4e38fe7": {
+        "id": "1dd67ca9-9be4-4e3b-a2b9-c568d4e38fe7",
+        "position": {
+          "x": 1525.1000061035156,
+          "y": 97
+        },
+        "orientation": 0,
+        "type": "merger",
+        "ports": {
+          "merger_source": {
+            "id": "merger_source",
+            "type": "left",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 0.5,
+              "y": 49.5
+            }
+          },
+          "merger_target": {
+            "id": "merger_target",
+            "type": "right",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 197.5,
+              "y": 49.5
+            }
+          }
+        },
+        "properties": {
+          "title": "Merger",
+          "scalingFactor": 1
+        },
+        "size": {
+          "width": 200,
+          "height": 100
+        }
+      },
+      "e37dacc1-458c-455b-b67c-0725f838c49c": {
+        "id": "e37dacc1-458c-455b-b67c-0725f838c49c",
+        "position": {
+          "x": 659.1000061035156,
+          "y": 79
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "stations_id_list": {
+            "properties": {
+              "color": "#ac6b53"
+            },
+            "id": "stations_id_list",
+            "type": "left",
+            "position": {
+              "x": 50.5,
+              "y": 74.5
+            }
+          },
+          "dobj_list": {
+            "properties": {
+              "color": "#591f93"
+            },
+            "id": "dobj_list",
+            "type": "right",
+            "position": {
+              "x": 218.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "stations_id_list",
+              "direction": "input",
+              "type": "datatype",
+              "color": "#ac6b53"
+            },
+            {
+              "name": "dobj_list",
+              "direction": "output",
+              "type": "datatype",
+              "color": "#591f93"
+            }
+          ],
+          "params": [
+            "param_data_type"
+          ],
+          "secrets": [],
+          "inputs": [
+            "stations_id_list"
+          ],
+          "outputs": [
+            "dobj_list"
+          ],
+          "og_node_id": "9f96d14"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      }
+    },
+    "links": {
+      "22d6fdcd-7c2b-4859-a1c8-57f38823bcf8": {
+        "id": "22d6fdcd-7c2b-4859-a1c8-57f38823bcf8",
+        "from": {
+          "nodeId": "997700ab-c6bd-4426-b298-66e31fbe907c",
+          "portId": "splitter_target"
+        },
+        "to": {
+          "nodeId": "5b940894-695c-4222-9fb8-4607df7f7477",
+          "portId": "dobj_list"
+        }
+      },
+      "a1dd765b-4a5a-45bf-a95f-429490777fdf": {
+        "id": "a1dd765b-4a5a-45bf-a95f-429490777fdf",
+        "from": {
+          "nodeId": "5b940894-695c-4222-9fb8-4607df7f7477",
+          "portId": "plot_files"
+        },
+        "to": {
+          "nodeId": "1dd67ca9-9be4-4e3b-a2b9-c568d4e38fe7",
+          "portId": "merger_source"
+        }
+      },
+      "212fce0d-4605-450e-9e76-34ac9972c9c7": {
+        "id": "212fce0d-4605-450e-9e76-34ac9972c9c7",
+        "from": {
+          "nodeId": "1dd67ca9-9be4-4e3b-a2b9-c568d4e38fe7",
+          "portId": "merger_target"
+        },
+        "to": {
+          "nodeId": "1950ddcc-c705-42de-8f93-e606b5e3ba09",
+          "portId": "plot_files"
+        }
+      },
+      "d9560946-4b22-4c68-a26b-4b5dad176475": {
+        "id": "d9560946-4b22-4c68-a26b-4b5dad176475",
+        "from": {
+          "nodeId": "faaaef93-24be-42c1-9567-6c749849a2ba",
+          "portId": "stations_id_list"
+        },
+        "to": {
+          "nodeId": "e37dacc1-458c-455b-b67c-0725f838c49c",
+          "portId": "stations_id_list"
+        }
+      },
+      "72ec50fc-bcc3-4387-a383-d978abff2807": {
+        "id": "72ec50fc-bcc3-4387-a383-d978abff2807",
+        "from": {
+          "nodeId": "e37dacc1-458c-455b-b67c-0725f838c49c",
+          "portId": "dobj_list"
+        },
+        "to": {
+          "nodeId": "997700ab-c6bd-4426-b298-66e31fbe907c",
+          "portId": "splitter_source"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {}
+  }
+}

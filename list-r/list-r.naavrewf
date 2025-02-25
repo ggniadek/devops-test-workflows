@@ -1,0 +1,298 @@
+{
+  "chart": {
+    "offset": {
+      "x": 1,
+      "y": 13
+    },
+    "scale": 1,
+    "nodes": {
+      "5ed147a6-94cf-42f0-972c-0ca4dd5ed112": {
+        "id": "5ed147a6-94cf-42f0-972c-0ca4dd5ed112",
+        "position": {
+          "x": 390.79998779296875,
+          "y": 64
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "names": {
+            "properties": {
+              "color": "#ac5397"
+            },
+            "id": "names",
+            "type": "right",
+            "position": {
+              "x": 224,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "list-r-set-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "names",
+              "direction": "output",
+              "type": "datatype",
+              "color": "#ac5397"
+            }
+          ],
+          "params": [],
+          "secrets": [],
+          "inputs": [],
+          "outputs": [
+            "names"
+          ],
+          "og_node_id": "70df0f0"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      },
+      "3217a2b5-abc6-47a5-91ba-fc3dfeaa6047": {
+        "id": "3217a2b5-abc6-47a5-91ba-fc3dfeaa6047",
+        "position": {
+          "x": 1587.7999877929688,
+          "y": 54
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "greetings": {
+            "properties": {
+              "color": "#e0bd6c"
+            },
+            "id": "greetings",
+            "type": "left",
+            "position": {
+              "x": 33.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "list-r-get-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "greetings",
+              "direction": "input",
+              "type": "datatype",
+              "color": "#e0bd6c"
+            }
+          ],
+          "params": [],
+          "secrets": [],
+          "inputs": [
+            "greetings"
+          ],
+          "outputs": [],
+          "og_node_id": "9867715"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      },
+      "c7732e16-baa9-402a-89ad-a4a30c9898f2": {
+        "id": "c7732e16-baa9-402a-89ad-a4a30c9898f2",
+        "position": {
+          "x": 721.7999877929688,
+          "y": 85
+        },
+        "orientation": 0,
+        "type": "splitter",
+        "ports": {
+          "splitter_source": {
+            "id": "splitter_source",
+            "type": "left",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 0.5,
+              "y": 49.5
+            }
+          },
+          "splitter_target": {
+            "id": "splitter_target",
+            "type": "right",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 197.5,
+              "y": 49.5
+            }
+          }
+        },
+        "properties": {
+          "title": "Splitter",
+          "scalingFactor": 1
+        },
+        "size": {
+          "width": 200,
+          "height": 100
+        }
+      },
+      "0671b978-420f-48f2-8db6-f9bbb9a4d91d": {
+        "id": "0671b978-420f-48f2-8db6-f9bbb9a4d91d",
+        "position": {
+          "x": 1305.7999877929688,
+          "y": 84
+        },
+        "orientation": 0,
+        "type": "merger",
+        "ports": {
+          "merger_source": {
+            "id": "merger_source",
+            "type": "left",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 0.5,
+              "y": 49.5
+            }
+          },
+          "merger_target": {
+            "id": "merger_target",
+            "type": "right",
+            "properties": {
+              "special_node": 1,
+              "color": "#000000"
+            },
+            "position": {
+              "x": 197.5,
+              "y": 49.5
+            }
+          }
+        },
+        "properties": {
+          "title": "Merger",
+          "scalingFactor": 1
+        },
+        "size": {
+          "width": 200,
+          "height": 100
+        }
+      },
+      "4256e1f1-6642-48f2-89b6-a6c2758d428f": {
+        "id": "4256e1f1-6642-48f2-89b6-a6c2758d428f",
+        "position": {
+          "x": 995.6499938964844,
+          "y": 63
+        },
+        "orientation": 0,
+        "type": "input-output",
+        "ports": {
+          "names": {
+            "properties": {
+              "color": "#ac5397"
+            },
+            "id": "names",
+            "type": "left",
+            "position": {
+              "x": 24,
+              "y": 74.5
+            }
+          },
+          "greetings": {
+            "properties": {
+              "color": "#e0bd6c"
+            },
+            "id": "greetings",
+            "type": "right",
+            "position": {
+              "x": 214.5,
+              "y": 74.5
+            }
+          }
+        },
+        "properties": {
+          "title": "list-r-process-gabriel-pelouze-lifewatch-eu",
+          "vars": [
+            {
+              "name": "names",
+              "direction": "input",
+              "type": "datatype",
+              "color": "#ac5397"
+            },
+            {
+              "name": "greetings",
+              "direction": "output",
+              "type": "datatype",
+              "color": "#e0bd6c"
+            }
+          ],
+          "params": [
+            "param_greeting_template"
+          ],
+          "secrets": [],
+          "inputs": [
+            "names"
+          ],
+          "outputs": [
+            "greetings"
+          ],
+          "og_node_id": "5ecaac5"
+        },
+        "size": {
+          "width": 250,
+          "height": 150
+        }
+      }
+    },
+    "links": {
+      "1fd70d12-c21f-41e7-9c75-1374edf06880": {
+        "id": "1fd70d12-c21f-41e7-9c75-1374edf06880",
+        "from": {
+          "nodeId": "5ed147a6-94cf-42f0-972c-0ca4dd5ed112",
+          "portId": "names"
+        },
+        "to": {
+          "nodeId": "c7732e16-baa9-402a-89ad-a4a30c9898f2",
+          "portId": "splitter_source"
+        }
+      },
+      "47b9847b-5735-4a91-a4b1-53d1f485c1ec": {
+        "id": "47b9847b-5735-4a91-a4b1-53d1f485c1ec",
+        "from": {
+          "nodeId": "0671b978-420f-48f2-8db6-f9bbb9a4d91d",
+          "portId": "merger_target"
+        },
+        "to": {
+          "nodeId": "3217a2b5-abc6-47a5-91ba-fc3dfeaa6047",
+          "portId": "greetings"
+        }
+      },
+      "d0729abc-228e-42df-9735-a37abfb7c78a": {
+        "id": "d0729abc-228e-42df-9735-a37abfb7c78a",
+        "from": {
+          "nodeId": "c7732e16-baa9-402a-89ad-a4a30c9898f2",
+          "portId": "splitter_target"
+        },
+        "to": {
+          "nodeId": "4256e1f1-6642-48f2-89b6-a6c2758d428f",
+          "portId": "names"
+        }
+      },
+      "4a4ac498-645c-4ddd-8a49-ddda56e25ccd": {
+        "id": "4a4ac498-645c-4ddd-8a49-ddda56e25ccd",
+        "from": {
+          "nodeId": "4256e1f1-6642-48f2-89b6-a6c2758d428f",
+          "portId": "greetings"
+        },
+        "to": {
+          "nodeId": "0671b978-420f-48f2-8db6-f9bbb9a4d91d",
+          "portId": "merger_source"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {}
+  }
+}

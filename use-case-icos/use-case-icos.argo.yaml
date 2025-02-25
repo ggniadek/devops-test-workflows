@@ -1,0 +1,223 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: n-a-a-vre-gabriel-pelouze-lifewatch-eu-
+  labels:
+    vlab_slug: openlab
+spec:
+    entrypoint: n-a-a-vre-gabriel-pelouze-lifewatch-eu
+    serviceAccountName: executor
+    volumeClaimTemplates:
+    - metadata:
+        name: workdir
+      spec:
+        accessModes: [ "ReadWriteMany" ]
+        persistentVolumeReclaimPolicy: Delete
+        resources:
+          requests:
+            storage: 1Gi
+    arguments:
+      parameters:
+      - name: param_ecosystem_type
+        value:  "Wetland"
+      - name: param_data_type
+        value:  "ETC L2 Fluxes"
+      - name: param_variable
+        value:  "CO2"
+      - name: param_cpauth_token
+        value:  ""
+      - name: param_s3_server
+        value:  "scruffy.lab.uvalight.net:9000"
+      - name: param_s3_bucket
+        value:  "naa-vre-user-data"
+      - name: param_s3_user_prefix
+        value:  ""
+      - name: param_s3_access_key
+        value:  ""
+      - name: param_s3_secret_key
+        value:  ""
+    templates:
+    - name: n-a-a-vre-gabriel-pelouze-lifewatch-eu
+      dag:
+        tasks:
+        - name: use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu-faaaef9
+          template: use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu-faaaef9-tmp
+          arguments:
+            parameters:
+            - {name: param_ecosystem_type, value: "{{workflow.parameters.param_ecosystem_type}}"}
+        - name: use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu-5b94089
+          dependencies: [ splitter-997700a ]
+          template: use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu-5b94089-tmp
+          arguments:
+            parameters:
+            - {name: splitter_target_997700a, value: "{{item}}"}
+            - {name: param_cpauth_token, value: "{{workflow.parameters.param_cpauth_token}}"}
+            - {name: param_variable, value: "{{workflow.parameters.param_variable}}"}
+          withParam: "{{tasks.splitter-997700a.outputs.parameters.splitter_target_997700a}}"
+        - name: use-case-icos-upload-files-gabriel-pelouze-lifewatch-eu-1950ddc
+          dependencies: [ merger-1dd67ca ]
+          template: use-case-icos-upload-files-gabriel-pelouze-lifewatch-eu-1950ddc-tmp
+          arguments:
+            parameters:
+            - {name: merger_target_1dd67ca, value: "{{tasks.merger-1dd67ca.outputs.parameters.merger_target_1dd67ca}}"}
+            - {name: param_s3_server, value: "{{workflow.parameters.param_s3_server}}"}
+            - {name: param_s3_bucket, value: "{{workflow.parameters.param_s3_bucket}}"}
+            - {name: param_s3_user_prefix, value: "{{workflow.parameters.param_s3_user_prefix}}"}
+            - {name: param_s3_access_key, value: "{{workflow.parameters.param_s3_access_key}}"}
+            - {name: param_s3_secret_key, value: "{{workflow.parameters.param_s3_secret_key}}"}
+        - name: splitter-997700a
+          dependencies: [ use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu-e37dacc ]
+          template: splitter-997700a-tmp
+          arguments:
+            parameters:
+            - {name: dobj_list_9f96d14, value: "{{tasks.use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu-e37dacc.outputs.parameters.dobj_list_9f96d14}}"}
+        - name: merger-1dd67ca
+          dependencies: [ use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu-5b94089 ]
+          template: merger-1dd67ca-tmp
+          arguments:
+            parameters:
+            - {name: plot_files_ccc5b54, value: "{{tasks.use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu-5b94089.outputs.parameters.plot_files_ccc5b54}}"}
+        - name: use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu-e37dacc
+          dependencies: [ use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu-faaaef9 ]
+          template: use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu-e37dacc-tmp
+          arguments:
+            parameters:
+            - {name: stations_id_list_7166a81, value: "{{tasks.use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu-faaaef9.outputs.parameters.stations_id_list_7166a81}}"}
+            - {name: param_data_type, value: "{{workflow.parameters.param_data_type}}"}
+    - name: use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu-faaaef9-tmp
+      outputs:
+        parameters:
+          - name: stations_id_list_7166a81
+            valueFrom:
+              path: /tmp/stations_id_list_7166a81.json
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/use-case-icos-list-stations-gabriel-pelouze-lifewatch-eu:a7f20a1"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --param_ecosystem_type "{{workflow.parameters.param_ecosystem_type}}"
+            --id  7166a81;
+    - name: use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu-5b94089-tmp
+      inputs:
+        parameters:
+        - name: splitter_target_997700a
+        - name: param_cpauth_token
+        - name: param_variable
+      outputs:
+        parameters:
+          - name: plot_files_ccc5b54
+            valueFrom:
+              path: /tmp/plot_files_ccc5b54.json
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/use-case-icos-plot-time-series-gabriel-pelouze-lifewatch-eu:caf4fe4"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --dobj_list '{{inputs.parameters.splitter_target_997700a}}'
+            --param_cpauth_token "{{workflow.parameters.param_cpauth_token}}"
+            --param_variable "{{workflow.parameters.param_variable}}"
+            --id  ccc5b54;
+    - name: use-case-icos-upload-files-gabriel-pelouze-lifewatch-eu-1950ddc-tmp
+      inputs:
+        parameters:
+        - name: merger_target_1dd67ca
+        - name: param_s3_server
+        - name: param_s3_bucket
+        - name: param_s3_user_prefix
+        - name: param_s3_access_key
+        - name: param_s3_secret_key
+      outputs:
+        parameters:
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/use-case-icos-upload-files-gabriel-pelouze-lifewatch-eu:646fbed"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --plot_files '{{inputs.parameters.merger_target_1dd67ca}}'
+            --param_s3_server "{{workflow.parameters.param_s3_server}}"
+            --param_s3_bucket "{{workflow.parameters.param_s3_bucket}}"
+            --param_s3_user_prefix "{{workflow.parameters.param_s3_user_prefix}}"
+            --param_s3_access_key "{{workflow.parameters.param_s3_access_key}}"
+            --param_s3_secret_key "{{workflow.parameters.param_s3_secret_key}}"
+            --id  dc78d14;
+    - name: splitter-997700a-tmp
+      inputs:
+        parameters:
+        - name: dobj_list_9f96d14
+      outputs:
+        parameters:
+          - name: splitter_target_997700a
+            valueFrom:
+              path: /tmp/splitter_target_997700a.json
+      script:
+        image: python:alpine3.9
+        imagePullPolicy: IfNotPresent
+        command: [python]
+        source: |
+          import json
+          dobj_list_9f96d14 = {{inputs.parameters.dobj_list_9f96d14}}
+          list_of_lists = []
+          for elem in dobj_list_9f96d14:
+            list = [elem]
+            list_of_lists.append(list)
+          f_out = open("/tmp/splitter_target_997700a.json", "w")
+          f_out.write(json.dumps(list_of_lists))
+          f_out.close()
+    - name: merger-1dd67ca-tmp
+      inputs:
+        parameters:
+        - name: plot_files_ccc5b54
+      outputs:
+        parameters:
+          - name: merger_target_1dd67ca
+            valueFrom:
+              path: /tmp/merger_target_1dd67ca.json
+      script:
+        image: python:alpine3.9
+        imagePullPolicy: IfNotPresent
+        command: [python]
+        source: |
+          import json
+          plot_files_ccc5b54 = {{inputs.parameters.plot_files_ccc5b54}}
+          plot_files_ccc5b54 = [item for items in plot_files_ccc5b54 for item in json.loads(items)]
+          f_out = open("/tmp/merger_target_1dd67ca.json", "w")
+          f_out.write(json.dumps(plot_files_ccc5b54))
+          f_out.close()
+    - name: use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu-e37dacc-tmp
+      inputs:
+        parameters:
+        - name: stations_id_list_7166a81
+        - name: param_data_type
+      outputs:
+        parameters:
+          - name: dobj_list_9f96d14
+            valueFrom:
+              path: /tmp/dobj_list_9f96d14.json
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/use-case-icos-list-data-products-gabriel-pelouze-lifewatch-eu:61bcfc5"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --stations_id_list '{{inputs.parameters.stations_id_list_7166a81}}'
+            --param_data_type "{{workflow.parameters.param_data_type}}"
+            --id  9f96d14;

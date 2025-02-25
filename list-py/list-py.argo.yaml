@@ -1,0 +1,155 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: n-a-a-vre-gabriel-pelouze-lifewatch-eu-
+  labels:
+    vlab_slug: openlab
+spec:
+    entrypoint: n-a-a-vre-gabriel-pelouze-lifewatch-eu
+    serviceAccountName: executor
+    volumeClaimTemplates:
+    - metadata:
+        name: workdir
+      spec:
+        accessModes: [ "ReadWriteMany" ]
+        persistentVolumeReclaimPolicy: Delete
+        resources:
+          requests:
+            storage: 1Gi
+    arguments:
+      parameters:
+      - name: param_greeting_template
+        value:  "Hello, {}!"
+    templates:
+    - name: n-a-a-vre-gabriel-pelouze-lifewatch-eu
+      dag:
+        tasks:
+        - name: list-py-set-gabriel-pelouze-lifewatch-eu-9a43e85
+          template: list-py-set-gabriel-pelouze-lifewatch-eu-9a43e85-tmp
+        - name: list-py-get-gabriel-pelouze-lifewatch-eu-890ba48
+          dependencies: [ merger-867e00b ]
+          template: list-py-get-gabriel-pelouze-lifewatch-eu-890ba48-tmp
+          arguments:
+            parameters:
+            - {name: merger_target_867e00b, value: "{{tasks.merger-867e00b.outputs.parameters.merger_target_867e00b}}"}
+        - name: splitter-ab75d5c
+          dependencies: [ list-py-set-gabriel-pelouze-lifewatch-eu-9a43e85 ]
+          template: splitter-ab75d5c-tmp
+          arguments:
+            parameters:
+            - {name: names_1ca0d5e, value: "{{tasks.list-py-set-gabriel-pelouze-lifewatch-eu-9a43e85.outputs.parameters.names_1ca0d5e}}"}
+        - name: merger-867e00b
+          dependencies: [ list-py-process-gabriel-pelouze-lifewatch-eu-55668f4 ]
+          template: merger-867e00b-tmp
+          arguments:
+            parameters:
+            - {name: greetings_9eb8967, value: "{{tasks.list-py-process-gabriel-pelouze-lifewatch-eu-55668f4.outputs.parameters.greetings_9eb8967}}"}
+        - name: list-py-process-gabriel-pelouze-lifewatch-eu-55668f4
+          dependencies: [ splitter-ab75d5c ]
+          template: list-py-process-gabriel-pelouze-lifewatch-eu-55668f4-tmp
+          arguments:
+            parameters:
+            - {name: splitter_target_ab75d5c, value: "{{item}}"}
+            - {name: param_greeting_template, value: "{{workflow.parameters.param_greeting_template}}"}
+          withParam: "{{tasks.splitter-ab75d5c.outputs.parameters.splitter_target_ab75d5c}}"
+    - name: list-py-set-gabriel-pelouze-lifewatch-eu-9a43e85-tmp
+      outputs:
+        parameters:
+          - name: names_1ca0d5e
+            valueFrom:
+              path: /tmp/names_1ca0d5e.json
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/list-py-set-gabriel-pelouze-lifewatch-eu:307c95c"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --id  1ca0d5e;
+    - name: list-py-get-gabriel-pelouze-lifewatch-eu-890ba48-tmp
+      inputs:
+        parameters:
+        - name: merger_target_867e00b
+      outputs:
+        parameters:
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/list-py-get-gabriel-pelouze-lifewatch-eu:ac3f6f5"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --greetings '{{inputs.parameters.merger_target_867e00b}}'
+            --id  3833d4d;
+    - name: splitter-ab75d5c-tmp
+      inputs:
+        parameters:
+        - name: names_1ca0d5e
+      outputs:
+        parameters:
+          - name: splitter_target_ab75d5c
+            valueFrom:
+              path: /tmp/splitter_target_ab75d5c.json
+      script:
+        image: python:alpine3.9
+        imagePullPolicy: IfNotPresent
+        command: [python]
+        source: |
+          import json
+          names_1ca0d5e = {{inputs.parameters.names_1ca0d5e}}
+          list_of_lists = []
+          for elem in names_1ca0d5e:
+            list = [elem]
+            list_of_lists.append(list)
+          f_out = open("/tmp/splitter_target_ab75d5c.json", "w")
+          f_out.write(json.dumps(list_of_lists))
+          f_out.close()
+    - name: merger-867e00b-tmp
+      inputs:
+        parameters:
+        - name: greetings_9eb8967
+      outputs:
+        parameters:
+          - name: merger_target_867e00b
+            valueFrom:
+              path: /tmp/merger_target_867e00b.json
+      script:
+        image: python:alpine3.9
+        imagePullPolicy: IfNotPresent
+        command: [python]
+        source: |
+          import json
+          greetings_9eb8967 = {{inputs.parameters.greetings_9eb8967}}
+          greetings_9eb8967 = [item for items in greetings_9eb8967 for item in json.loads(items)]
+          f_out = open("/tmp/merger_target_867e00b.json", "w")
+          f_out.write(json.dumps(greetings_9eb8967))
+          f_out.close()
+    - name: list-py-process-gabriel-pelouze-lifewatch-eu-55668f4-tmp
+      inputs:
+        parameters:
+        - name: splitter_target_ab75d5c
+        - name: param_greeting_template
+      outputs:
+        parameters:
+          - name: greetings_9eb8967
+            valueFrom:
+              path: /tmp/greetings_9eb8967.json
+      container:
+        image: "ghcr.io/qcdis/naavre-cells-openlab/list-py-process-gabriel-pelouze-lifewatch-eu:d49895b"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: workdir
+          mountPath: /tmp/data
+        env:
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate; python /app/task.py
+            --names '{{inputs.parameters.splitter_target_ab75d5c}}'
+            --param_greeting_template "{{workflow.parameters.param_greeting_template}}"
+            --id  9eb8967;
