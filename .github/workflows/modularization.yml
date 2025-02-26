@@ -19,11 +19,13 @@ jobs:
       - name: Check for .ipynb files
         id: check-ipynb
         run:
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.ipynb$'; then
-            echo "contains_ipynb=true" >> $GITHUB_ENV
-          else
-            echo "contains_ipynb=false" >> $GITHUB_ENV
-          fi
+          files = (git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA) | 
+          echo files
+          # if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.ipynb$'; then
+          #   echo "contains_ipynb=true" >> $GITHUB_ENV
+          # else
+          #   echo "contains_ipynb=false" >> $GITHUB_ENV
+          # fi
 
   # createMetaDataFile:
   # splitIntoCellFiles:
