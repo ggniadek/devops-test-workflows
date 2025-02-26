@@ -19,7 +19,7 @@ jobs:
       - name: Check for .ipynb files
         id: check-ipynb
         run:
-          files = (git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA) | 
+          files = (git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA); then
           echo files
           # if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.ipynb$'; then
           #   echo "contains_ipynb=true" >> $GITHUB_ENV
