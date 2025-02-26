@@ -1,0 +1,29 @@
+name: Notebook
+
+on:
+  # Triggers the workflow on push
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # Identify if .ipynb files were in the commit
+  check-for-ipynb-files:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    outputs:
+      contains_ipynb: ${{ steps.check-for-ipynb-files.outputs.contains_ipynb }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Check for .ipynb files
+        id: check-ipynb
+        run:
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.ipynb$'; then
+            echo "contains_ipynb=true" >> $GITHUB_ENV
+          else
+            echo "contains_ipynb=false" >> $GITHUB_ENV
+          fi
+
+  # createMetaDataFile:
+  # splitIntoCellFiles:
