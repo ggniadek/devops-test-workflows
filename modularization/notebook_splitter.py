@@ -11,7 +11,7 @@ def create_cell_files(notebook_dir: str, cell_name: str, code_lines_only: list[s
     with open(f"{notebook_dir}/{id}_{cell_name}.py", "w", encoding="utf-8") as f:
         f.write('\n'.join(code_lines_only) + '\n')
 
-    print(f"Created {cell_name}.py")
+    print(f"Created {id}_{cell_name}.py")
 
 
 # Checks if metadata was provided for the cell
@@ -58,12 +58,12 @@ def split_notebook(notebook_path):
         if cell.cell_type == "code":
             # Check if metadata exists in the cell
             if metadata_check(cell):
+                cell_lines = cell.source.split("\n")
+                cell_name = cell_lines[0].lstrip("# ").strip()
                 # Separate the code lines & metadata
                 code_lines = []
-                cell_lines = cell.source.split("\n")
-                cell_name = (cell_lines[0].split("# ")[1])
                 for line in cell_lines:
-                    if line.lstrip()[0] != "#":
+                    if not line or line.lstrip()[0] != "#":
                         code_lines.append(line)
                     else:
                         metadata.append(line)
