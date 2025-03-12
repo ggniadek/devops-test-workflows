@@ -1,0 +1,10 @@
+{
+    "use-case-icos": {
+        "use-case-icos-list-stationss": {
+            "dependencies": [icoscp.station]
+        },
+        "use-case-icos-list-data-products": {
+            "dependencies": [icoscp.station, warnings]
+        }
+    }
+}

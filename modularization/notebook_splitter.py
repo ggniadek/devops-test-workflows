@@ -2,6 +2,7 @@ import os
 import json
 import nbformat
 import yaml
+import re
 
 # Folder, which stores the modularized code
 folder_name = "modularization"
@@ -60,17 +61,74 @@ def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
         print(f"Error saving JSON file for {notebook_name}: {e}")
 
 
+# def get_imports(nb):
+#     """
+#     Extracts a set of import statements from all code cells in the notebook.
+#     """
+#     imports = set()  # Used a set to avoid duplicates
+#     library_names = set()
+#     for cell in nb.cells:
+#         if cell.cell_type == "code":
+#             for line in cell.source.splitlines():
+#                 stripped = line.strip()
+#                 if stripped.startswith("import ") or stripped.startswith("from "):
+#                     imports.add(stripped)
+
+#                     # I let chatGTP write this conditions:
+#                     if stripped.startswith("import "):
+#                         # Remove the "import " prefix and split by commas (to handle multiple imports)
+#                         rest = stripped[len("import "):].strip()
+#                         parts = rest.split(',')
+#                         for part in parts:
+#                             # Remove alias if present (e.g., "numpy as np")
+#                             part = part.strip()
+#                             if " as " in part:
+#                                 part = part.split(" as ")[0].strip()
+#                             # Only keep the top-level module (e.g., "matplotlib" from "matplotlib.pyplot")
+#                             top_level = part.split('.')[0]
+#                             library_names.add(top_level)
+
+#                     elif stripped.startswith("from "):
+#                         # Extract the module after "from", e.g., "from pandas import DataFrame" -> "pandas"
+#                         match = re.match(r'from\s+([^\s]+)', stripped)
+#                         if match:
+#                             module_name = match.group(1)
+#                             top_level = module_name.split('.')[0]
+#                             library_names.add(top_level)
+
+#     print(f"Imported libraries: {library_names}")
+#     return list(imports)
+
+
 def get_imports(nb):
     """
-    Extracts a set of import statements from all code cells in the notebook.
+    Extracts a set of import statements from all code cells in the notebook,
+    and also prints the unique top-level library names found.
     """
-    imports = set() # Used a set to avoid duplicates
+    imports = set()  # Used a set to avoid duplicates
+    library_names = set()
     for cell in nb.cells:
         if cell.cell_type == "code":
             for line in cell.source.splitlines():
                 stripped = line.strip()
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     imports.add(stripped)
+                    if stripped.startswith("import "):
+                        rest = stripped[len("import "):].strip()
+                        parts = rest.split(',')
+                        for part in parts:
+                            part = part.strip()
+                            if " as " in part:
+                                part = part.split(" as ")[0].strip()
+                            top_level = part.split('.')[0]
+                            library_names.add(top_level)
+                    elif stripped.startswith("from "):
+                        match = re.match(r'from\s+([^\s]+)', stripped)
+                        if match:
+                            module_name = match.group(1)
+                            top_level = module_name.split('.')[0]
+                            library_names.add(top_level)
+    print(f"Imported libraries: {library_names}")
     return list(imports)
 
 
