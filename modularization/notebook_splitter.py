@@ -1,5 +1,7 @@
 import os
+import json
 import nbformat
+import yaml
 
 # Folder, which stores the modularized code
 folder_name = "modularization"
@@ -42,6 +44,22 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
+def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
+    """
+    Creates a JSON file based on the metadata list passed.
+    Each metadata line is cleaned (removing the '#' and extra spaces) and stored as an item in a JSON array.
+    """
+    json_filename = f"{folder_name}/{notebook_name}/metadata.json"
+    # Clean each metadata line
+    cleaned_metadata = [line.lstrip("# ").strip() for line in metadata]
+    try:
+        with open(json_filename, "w", encoding="utf-8") as json_file:
+            json.dump(cleaned_metadata, json_file, indent=4)
+        print(f"Extracted metadata saved as JSON: {json_filename}")
+    except Exception as e:
+        print(f"Error saving JSON file for {notebook_name}: {e}")
+
+
 def get_imports(nb):
     """
     Extracts a set of import statements from all code cells in the notebook.
@@ -54,23 +72,6 @@ def get_imports(nb):
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     imports.add(stripped)
     return list(imports)
-
-
-def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
-    """
-    Saves metadata into a YAML file.
-    """
-    # Remove '#' from comments and join metadata lines
-    cleaned_metadata = "\n".join(line.lstrip("# ").strip() for line in metadata)
-
-    # Save directly as a YAML file
-    yaml_filename = f"modularization/{notebook_name}/metadata.yaml"
-    try:
-        with open(yaml_filename, "w", encoding="utf-8") as yaml_file:
-            yaml_file.write(cleaned_metadata)
-        print(f"Extracted metadata saved as YAML: {yaml_filename}")
-    except Exception as e:
-        print(f"Error saving YAML file for {notebook_name}: {e}")
 
 
 def split_notebook(notebook_path):

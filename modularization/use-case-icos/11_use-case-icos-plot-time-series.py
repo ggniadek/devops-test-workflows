@@ -1,13 +1,13 @@
-from icoscp.station import station
-import matplotlib.pyplot as plt
 import os
-from icoscp_core.icos import bootstrap
-import warnings
-import pandas as pd
 from minio import Minio
 from icoscp import cpauth
-import slugify
+from icoscp.station import station
+import pandas as pd
 from icoscp.cpb.dobj import Dobj
+import warnings
+import slugify
+import matplotlib.pyplot as plt
+from icoscp_core.icos import bootstrap
 
 def lambda_handler(event, context):
     
