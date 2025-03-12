@@ -5,8 +5,10 @@ import nbformat
 folder_name = "modularization"
 
 
-# Creates python files for each cell
 def create_cell_files(notebook_dir: str, cell_name: str, code_lines_only: list[str], id: int) -> None:
+    """
+    Creates a python file for each cell in the notebook
+    """
 
     with open(f"{notebook_dir}/{id}_{cell_name}.py", "w", encoding="utf-8") as f:
         f.write('\n'.join(code_lines_only) + '\n')
@@ -14,8 +16,11 @@ def create_cell_files(notebook_dir: str, cell_name: str, code_lines_only: list[s
     print(f"Created {id}_{cell_name}.py")
 
 
-# Checks if metadata was provided for the cell
 def metadata_check(cell: str) -> bool:
+    """
+    Checks if metadata was provided for the cell
+    """
+
     metadata_identifiers = ["# NaaVRE:", "#  cell:"]
     cell_text = cell.source.split("\n")  # Convert to a list of lines
 
@@ -25,6 +30,20 @@ def metadata_check(cell: str) -> bool:
         return True
     else:
         return False
+
+
+def get_imports(nb):
+    """
+    Extracts a set of import statements from all code cells in the notebook.
+    """
+    imports = set() # Used a set to avoid duplicates
+    for cell in nb.cells:
+        if cell.cell_type == "code":
+            for line in cell.source.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("import ") or stripped.startswith("from "):
+                    imports.add(stripped)
+    return list(imports)
 
 
 # Creates metadata file for each cell
