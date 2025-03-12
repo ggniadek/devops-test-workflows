@@ -6,7 +6,8 @@ import lambda_archiver
 folder_name = "build"
 
 
-def create_cell_file(notebook_dir: str, cell_name: str, code_lines_only: list[str], id: int) -> str:
+def create_cell_file(notebook_dir: str, cell_name: str,
+                     code_lines_only: list[str], id: int) -> str:
     """
     Creates a python file for one cell in the notebook
     """
@@ -40,6 +41,7 @@ def extract_package_name(import_string: str) -> str:
     root_package = package.split('.')[0]
     return root_package
 
+
 def get_imports(notebook_path):
     """
     Extracts a set of import statements from all code cells in the notebook.
@@ -47,7 +49,7 @@ def get_imports(notebook_path):
     with open(notebook_path, "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
 
-    imports = set() # Used a set to avoid duplicates
+    imports = set()  # Used a set to avoid duplicates
     for cell in nb.cells:
         if cell.cell_type == "code":
             for line in cell.source.splitlines():
@@ -56,21 +58,6 @@ def get_imports(notebook_path):
                     package_name = extract_package_name(stripped)
                     imports.add(package_name)
     return list(imports)
-
-
-# Creates metadata file for each cell
-# def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
-#     # Remove '#' from comments and join metadata lines
-#     cleaned_metadata = "\n".join(line.lstrip("# ").strip() for line in metadata)
-#
-#     # Save directly as a YAML file
-#     yaml_filename = f"modularization/{notebook_name}/metadata.yaml"
-#     try:
-#         with open(yaml_filename, "w", encoding="utf-8") as yaml_file:
-#             yaml_file.write(cleaned_metadata)
-#         print(f"Extracted metadata saved as YAML: {yaml_filename}")
-#     except Exception as e:
-#         print(f"Error saving YAML file for {notebook_name}: {e}")
 
 
 def split_notebook(notebook_path):
@@ -92,16 +79,13 @@ def split_notebook(notebook_path):
             continue
         cell_lines = cell.source.split("\n")
         cell_name = cell_lines[0].lstrip("# ").strip()
-        # Separate the code lines & metadata
-        # code_lines = []
-        # for line in cell_lines:
-        #     if not line or line.lstrip()[0] != "#":
-        #         code_lines.append(line)
+
         cells.append({
             "name": cell_name,
             "code": cell.source
         })
     return cells
+
 
 if __name__ == "__main__":
     with open("modified_notebooks.txt", "r", encoding="utf-8") as f:
