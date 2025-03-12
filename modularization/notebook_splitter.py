@@ -5,15 +5,25 @@ import nbformat
 folder_name = "modularization"
 
 
-def create_cell_files(notebook_dir: str, cell_name: str, code_lines_only: list[str], id: int) -> None:
+def create_cell_files(notebook_dir: str, cell_name: str, code_lines: list[str],
+                      cell_id: int, import_lines: list[str]) -> None:
     """
     Creates a python file for each cell in the notebook
     """
+    filename = f"{notebook_dir}/{cell_id}_{cell_name}.py"
+    with open(filename, "w", encoding="utf-8") as f:
+        # Including each import statement in the cell file
+        for imp_statement in import_lines:
+            f.write(imp_statement + "\n")
+        f.write("\n")
+        # Lambda function wrapper
+        f.write("def lambda_handler(event, context):\n")
+        # Write the code lines
+        for line in code_lines:
+            # Indent code by 4 spaces (bc no it is inside of a function)
+            f.write("    " + line + "\n")
 
-    with open(f"{notebook_dir}/{id}_{cell_name}.py", "w", encoding="utf-8") as f:
-        f.write('\n'.join(code_lines_only) + '\n')
-
-    print(f"Created {id}_{cell_name}.py")
+    print(f"Created {filename}.py")
 
 
 def metadata_check(cell: str) -> bool:
@@ -46,8 +56,10 @@ def get_imports(nb):
     return list(imports)
 
 
-# Creates metadata file for each cell
 def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
+    """
+    Saves metadata into a YAML file.
+    """
     # Remove '#' from comments and join metadata lines
     cleaned_metadata = "\n".join(line.lstrip("# ").strip() for line in metadata)
 
@@ -62,12 +74,20 @@ def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
 
 
 def split_notebook(notebook_path):
+    """
+    Splits .ipynb file into separate .py files
+    Each cell file:
+    - Include import statements (aggregated from the whole .ipynb)
+    - Will be wrapped in lambda_handler function
+    """
+
     with open(notebook_path, "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
 
-    # The name of the primary notebook file
+    import_lines = get_imports(nb)
+
+    # Use the notebook filename as the folder name
     notebook_name = os.path.splitext(notebook_path)[0].split("/")[0]
-    # Ensure the target directory exists
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
@@ -78,15 +98,21 @@ def split_notebook(notebook_path):
             # Check if metadata exists in the cell
             if metadata_check(cell):
                 cell_lines = cell.source.split("\n")
+                # The first line contains a cell name
                 cell_name = cell_lines[0].lstrip("# ").strip()
-                # Separate the code lines & metadata
                 code_lines = []
+                # Separate metadata lines from code lines
                 for line in cell_lines:
-                    if not line or line.lstrip()[0] != "#":
+                    stripped = line.lstrip()
+                    # Skipping import statements as they were already added
+                    if stripped.startswith("import ") or stripped.startswith("from "):
+                        continue
+                    elif not line or line.lstrip()[0] != "#":
                         code_lines.append(line)
                     else:
                         metadata.append(line)
-                create_cell_files(notebook_dir, cell_name, code_lines, i)
+                create_cell_files(notebook_dir, cell_name,
+                                  code_lines, i, import_lines)
     build_metadata_file(notebook_name, metadata)
 
 
