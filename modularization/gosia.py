@@ -45,20 +45,20 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
-    """
-    Creates a JSON file based on the metadata list passed.
-    Each metadata line is cleaned (removing the '#' and extra spaces) and stored as an item in a JSON array.
-    """
-    json_filename = f"{folder_name}/{notebook_name}/metadata.json"
-    # Clean each metadata line
-    cleaned_metadata = [line.lstrip("# ").strip() for line in metadata]
-    try:
-        with open(json_filename, "w", encoding="utf-8") as json_file:
-            json.dump(cleaned_metadata, json_file, indent=4)
-        print(f"Extracted metadata saved as JSON: {json_filename}")
-    except Exception as e:
-        print(f"Error saving JSON file for {notebook_name}: {e}")
+# def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
+#     """
+#     Creates a JSON file based on the metadata list passed.
+#     Each metadata line is cleaned (removing the '#' and extra spaces) and stored as an item in a JSON array.
+#     """
+#     json_filename = f"{folder_name}/{notebook_name}/metadata.json"
+#     # Clean each metadata line
+#     cleaned_metadata = [line.lstrip("# ").strip() for line in metadata]
+#     try:
+#         with open(json_filename, "w", encoding="utf-8") as json_file:
+#             json.dump(cleaned_metadata, json_file, indent=4)
+#         print(f"Extracted metadata saved as JSON: {json_filename}")
+#     except Exception as e:
+#         print(f"Error saving JSON file for {notebook_name}: {e}")
 
 
 def get_imports(nb):
@@ -101,38 +101,6 @@ def get_imports(nb):
     return list(imports)
 
 
-# def get_imports(nb):
-#     """
-#     Extracts a set of import statements from all code cells in the notebook,
-#     and also prints the unique top-level library names found.
-#     """
-#     imports = set()  # Used a set to avoid duplicates
-#     library_names = set()
-#     for cell in nb.cells:
-#         if cell.cell_type == "code":
-#             for line in cell.source.splitlines():
-#                 stripped = line.strip()
-#                 if stripped.startswith("import ") or stripped.startswith("from "):
-#                     imports.add(stripped)
-#                     if stripped.startswith("import "):
-#                         rest = stripped[len("import "):].strip()
-#                         parts = rest.split(',')
-#                         for part in parts:
-#                             part = part.strip()
-#                             if " as " in part:
-#                                 part = part.split(" as ")[0].strip()
-#                             top_level = part.split('.')[0]
-#                             library_names.add(top_level)
-#                     elif stripped.startswith("from "):
-#                         match = re.match(r'from\s+([^\s]+)', stripped)
-#                         if match:
-#                             module_name = match.group(1)
-#                             top_level = module_name.split('.')[0]
-#                             library_names.add(top_level)
-#     print(f"Imported libraries: {library_names}")
-#     return list(imports)
-
-
 def split_notebook(notebook_path):
     """
     Splits .ipynb file into separate .py files
@@ -147,33 +115,32 @@ def split_notebook(notebook_path):
     import_lines = get_imports(nb)
 
     # Use the notebook filename as the folder name
-    notebook_name = os.path.splitext(notebook_path)[0].split("/")[0]
+    notebook_name = os.path.splitext(notebook_path)[0].split("/")[1]
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
-    metadata = []
-
     for i, cell in enumerate(nb.cells):
         if cell.cell_type == "code":
-            # Check if metadata exists in the cell
-            if metadata_check(cell):
-                cell_lines = cell.source.split("\n")
+            cell_lines = cell.source.split("\n")
+            # Check if cell name and matadata code comments exist for the cell
+            if not metadata_check(cell):
+                cell_name = "global_cell"
+            else:
                 # The first line contains a cell name
                 cell_name = cell_lines[0].lstrip("# ").strip()
-                code_lines = []
-                # Separate metadata lines from code lines
-                for line in cell_lines:
-                    stripped = line.lstrip()
-                    # Skipping import statements as they were already added
-                    if stripped.startswith("import ") or stripped.startswith("from "):
-                        continue
-                    elif not line or line.lstrip()[0] != "#":
-                        code_lines.append(line)
-                    else:
-                        metadata.append(line)
-                create_cell_files(notebook_dir, cell_name,
-                                  code_lines, i, import_lines)
-    build_metadata_file(notebook_name, metadata)
+
+            code_lines = []
+            # Separate metadata lines from code lines
+            for line in cell_lines:
+                stripped = line.lstrip()
+                # Skipping import statements as they were already added
+                if stripped.startswith("import ") or stripped.startswith("from "):
+                    continue
+                elif not line or line.lstrip()[0] != "#":
+                    code_lines.append(line)
+            create_cell_files(notebook_dir, cell_name,
+                                code_lines, i, import_lines)
+
 
 
 if __name__ == "__main__":
