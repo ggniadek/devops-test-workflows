@@ -2,6 +2,7 @@ import os
 import nbformat
 
 from lambda_archiver import make_lambda_archive
+from modularization.lambda_archiver import make_layer_archive
 
 # Folder, which stores the modularized code
 folder_name = "build"
@@ -111,10 +112,13 @@ if __name__ == "__main__":
     for nb_file in notebooks:
         if os.path.exists(nb_file):
             notebook_name = os.path.splitext(nb_file)[0].split("/")[-1]
+            root_dir = f'build/{notebook_name}'
             cells = split_notebook(nb_file)
-            imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
-            print(imports)
             for cell in cells:
-                make_lambda_archive(cell['name'], cell['code'], imports, notebook_name)
+                make_lambda_archive(cell['name'], cell['code'], root_dir)
+
+            layer_name = f"{notebook_name}-layer"
+            imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
+            make_layer_archive(layer_name, imports, root_dir)
         else:
             print(f"Warning: {nb_file} does not exist.")
