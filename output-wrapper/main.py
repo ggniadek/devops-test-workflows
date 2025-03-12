@@ -30,6 +30,5 @@ def lambda_handler(event):
                     vars_dict.update(value['metadata'])
           else:
                vars_dict.update({ key: value })
-     print(vars_dict)
      
 
