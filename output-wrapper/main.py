@@ -1,17 +1,3 @@
-import json
-
-### For testing, must be removed!, this should be provided by Lambda.
-event_test_remove_in_deployment = {
-     "metadata": {
-          "names": [
-               "Ilia",
-               "Bruno",
-               "Gosia",
-               "Goncalo"
-          ]
-     }
-}
-
 vars_dict = {}
 def lambda_handler(event):
      
@@ -35,19 +21,15 @@ def lambda_handler(event):
                k.startswith('__') |
                k.startswith('json') |
                k.startswith('lambda_handler') |
-               k.startswith('vars_dict') |
-               k.startswith('event_test_remove_in_deployment') # remove this in deployment, not needed
+               k.startswith('vars_dict')
           }
      for key, value in vars_dict_curr.items():
-          if key != 'event':
-               if key == 'event':
-                    # Ensure that there's no overwritten data
-                    if vars_dict.get(key) == None:
-                         vars_dict.update(value['metadata'])
-               else:
-                    vars_dict.update({ key: value })
+          if key == 'event':
+               # Ensure that there's no overwritten data
+               if vars_dict.get(key) == None:
+                    vars_dict.update(value['metadata'])
+          else:
+               vars_dict.update({ key: value })
      print(vars_dict)
-     
-lambda_handler(event_test_remove_in_deployment)
      
 
