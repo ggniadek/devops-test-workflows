@@ -1,11 +1,12 @@
 vars_dict = {}
-def lambda_handler(event):
+def lambda_handler(event, context):
      
      # 1. Handling ingestion of previously defined variables
      # This allows for the variables to be used.
-     metadata = event['metadata']
-     for key, value in metadata.items():
-          globals()[key] = value
+     if 'metadata' in event:
+          metadata = event['metadata']
+          for key, value in metadata.items():
+               globals()[key] = value
      
           
      #########
