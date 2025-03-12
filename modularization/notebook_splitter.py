@@ -2,7 +2,6 @@ import os
 import nbformat
 
 from lambda_archiver import make_lambda_archive
-from modularization.lambda_archiver import make_layer_archive
 
 # Folder, which stores the modularized code
 folder_name = "build"
