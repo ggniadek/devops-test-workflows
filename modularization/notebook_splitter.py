@@ -1,32 +1,23 @@
 import os
-import json
 import nbformat
-import yaml
-import re
+
+from lambda_archiver import make_lambda_archive
 
 # Folder, which stores the modularized code
-folder_name = "modularization"
+folder_name = "build"
 
 
-def create_cell_files(notebook_dir: str, cell_name: str, code_lines: list[str],
-                      cell_id: int, import_lines: list[str]) -> None:
+def create_cell_file(notebook_dir: str, cell_name: str, code_lines_only: list[str], id: int) -> str:
     """
-    Creates a python file for each cell in the notebook
+    Creates a python file for one cell in the notebook
     """
-    filename = f"{notebook_dir}/{cell_id}_{cell_name}.py"
-    with open(filename, "w", encoding="utf-8") as f:
-        # Including each import statement in the cell file
-        for imp_statement in import_lines:
-            f.write(imp_statement + "\n")
-        f.write("\n")
-        # Lambda function wrapper
-        f.write("def lambda_handler(event, context):\n")
-        # Write the code lines
-        for line in code_lines:
-            # Indent code by 4 spaces (bc no it is inside of a function)
-            f.write("    " + line + "\n")
 
-    print(f"Created {filename}.py")
+    file_name = f"{notebook_dir}/{id}_{cell_name}.py"
+    with open(file_name, "w", encoding="utf-8") as f:
+        f.write('\n'.join(code_lines_only) + '\n')
+
+    print(f"Created {id}_{cell_name}.py")
+    return file_name
 
 
 def metadata_check(cell: str) -> bool:
@@ -45,135 +36,73 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
+def extract_package_name(import_string: str) -> str:
+    package = import_string.split(' ')[1]
+    root_package = package.split('.')[0]
+    return root_package
+
+def get_imports(notebook_path):
     """
-    Creates a JSON file based on the metadata list passed.
-    Each metadata line is cleaned (removing the '#' and extra spaces) and stored as an item in a JSON array.
+    Extracts a set of import statements from all code cells in the notebook.
     """
-    json_filename = f"{folder_name}/{notebook_name}/metadata.json"
-    # Clean each metadata line
-    cleaned_metadata = [line.lstrip("# ").strip() for line in metadata]
-    try:
-        with open(json_filename, "w", encoding="utf-8") as json_file:
-            json.dump(cleaned_metadata, json_file, indent=4)
-        print(f"Extracted metadata saved as JSON: {json_filename}")
-    except Exception as e:
-        print(f"Error saving JSON file for {notebook_name}: {e}")
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        nb = nbformat.read(f, as_version=4)
 
-
-# def get_imports(nb):
-#     """
-#     Extracts a set of import statements from all code cells in the notebook.
-#     """
-#     imports = set()  # Used a set to avoid duplicates
-#     library_names = set()
-#     for cell in nb.cells:
-#         if cell.cell_type == "code":
-#             for line in cell.source.splitlines():
-#                 stripped = line.strip()
-#                 if stripped.startswith("import ") or stripped.startswith("from "):
-#                     imports.add(stripped)
-
-#                     # I let chatGTP write this conditions:
-#                     if stripped.startswith("import "):
-#                         # Remove the "import " prefix and split by commas (to handle multiple imports)
-#                         rest = stripped[len("import "):].strip()
-#                         parts = rest.split(',')
-#                         for part in parts:
-#                             # Remove alias if present (e.g., "numpy as np")
-#                             part = part.strip()
-#                             if " as " in part:
-#                                 part = part.split(" as ")[0].strip()
-#                             # Only keep the top-level module (e.g., "matplotlib" from "matplotlib.pyplot")
-#                             top_level = part.split('.')[0]
-#                             library_names.add(top_level)
-
-#                     elif stripped.startswith("from "):
-#                         # Extract the module after "from", e.g., "from pandas import DataFrame" -> "pandas"
-#                         match = re.match(r'from\s+([^\s]+)', stripped)
-#                         if match:
-#                             module_name = match.group(1)
-#                             top_level = module_name.split('.')[0]
-#                             library_names.add(top_level)
-
-#     print(f"Imported libraries: {library_names}")
-#     return list(imports)
-
-
-def get_imports(nb):
-    """
-    Extracts a set of import statements from all code cells in the notebook,
-    and also prints the unique top-level library names found.
-    """
-    imports = set()  # Used a set to avoid duplicates
-    library_names = set()
+    imports = set() # Used a set to avoid duplicates
     for cell in nb.cells:
         if cell.cell_type == "code":
             for line in cell.source.splitlines():
                 stripped = line.strip()
                 if stripped.startswith("import ") or stripped.startswith("from "):
-                    imports.add(stripped)
-                    if stripped.startswith("import "):
-                        rest = stripped[len("import "):].strip()
-                        parts = rest.split(',')
-                        for part in parts:
-                            part = part.strip()
-                            if " as " in part:
-                                part = part.split(" as ")[0].strip()
-                            top_level = part.split('.')[0]
-                            library_names.add(top_level)
-                    elif stripped.startswith("from "):
-                        match = re.match(r'from\s+([^\s]+)', stripped)
-                        if match:
-                            module_name = match.group(1)
-                            top_level = module_name.split('.')[0]
-                            library_names.add(top_level)
-    print(f"Imported libraries: {library_names}")
+                    package_name = extract_package_name(stripped)
+                    imports.add(package_name)
     return list(imports)
 
 
-def split_notebook(notebook_path):
-    """
-    Splits .ipynb file into separate .py files
-    Each cell file:
-    - Include import statements (aggregated from the whole .ipynb)
-    - Will be wrapped in lambda_handler function
-    """
+# Creates metadata file for each cell
+# def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
+#     # Remove '#' from comments and join metadata lines
+#     cleaned_metadata = "\n".join(line.lstrip("# ").strip() for line in metadata)
+#
+#     # Save directly as a YAML file
+#     yaml_filename = f"modularization/{notebook_name}/metadata.yaml"
+#     try:
+#         with open(yaml_filename, "w", encoding="utf-8") as yaml_file:
+#             yaml_file.write(cleaned_metadata)
+#         print(f"Extracted metadata saved as YAML: {yaml_filename}")
+#     except Exception as e:
+#         print(f"Error saving YAML file for {notebook_name}: {e}")
 
+
+def split_notebook(notebook_path):
     with open(notebook_path, "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
 
-    import_lines = get_imports(nb)
-
-    # Use the notebook filename as the folder name
-    notebook_name = os.path.splitext(notebook_path)[0].split("/")[0]
+    # The name of the primary notebook file
+    notebook_name = os.path.splitext(notebook_path)[0].split("/")[-1]
+    # Ensure the target directory exists
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
-    metadata = []
-
+    cells = []
     for i, cell in enumerate(nb.cells):
-        if cell.cell_type == "code":
+        if cell.cell_type != "code":
+            continue
             # Check if metadata exists in the cell
-            if metadata_check(cell):
-                cell_lines = cell.source.split("\n")
-                # The first line contains a cell name
-                cell_name = cell_lines[0].lstrip("# ").strip()
-                code_lines = []
-                # Separate metadata lines from code lines
-                for line in cell_lines:
-                    stripped = line.lstrip()
-                    # Skipping import statements as they were already added
-                    if stripped.startswith("import ") or stripped.startswith("from "):
-                        continue
-                    elif not line or line.lstrip()[0] != "#":
-                        code_lines.append(line)
-                    else:
-                        metadata.append(line)
-                create_cell_files(notebook_dir, cell_name,
-                                  code_lines, i, import_lines)
-    build_metadata_file(notebook_name, metadata)
-
+        if not metadata_check(cell):
+            continue
+        cell_lines = cell.source.split("\n")
+        cell_name = cell_lines[0].lstrip("# ").strip()
+        # Separate the code lines & metadata
+        # code_lines = []
+        # for line in cell_lines:
+        #     if not line or line.lstrip()[0] != "#":
+        #         code_lines.append(line)
+        cells.append({
+            "name": cell_name,
+            "code": cell.source
+        })
+    return cells
 
 if __name__ == "__main__":
     with open("modified_notebooks.txt", "r", encoding="utf-8") as f:
@@ -181,6 +110,11 @@ if __name__ == "__main__":
 
     for nb_file in notebooks:
         if os.path.exists(nb_file):
-            split_notebook(nb_file)
+            notebook_name = os.path.splitext(nb_file)[0].split("/")[-1]
+            cells = split_notebook(nb_file)
+            imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
+            print(imports)
+            for cell in cells:
+                make_lambda_archive(cell['name'], cell['code'], imports, notebook_name)
         else:
             print(f"Warning: {nb_file} does not exist.")
