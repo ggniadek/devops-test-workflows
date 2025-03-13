@@ -49,16 +49,6 @@ def extracted_package_name(import_statements: list[str]) -> [str]:
     return list(root_packages)
 
 
-def extract_package_name(import_string: list[str]) -> str:
-    """
-    Extracts the package name from an import statement
-    """
-    package = import_string.split(' ')[1]
-    root_package = package.split('.')[0]
-
-    return root_package
-
-
 def get_imports(notebook_path):
     """
     Extracts a set of import statements from all code cells in the notebook.
@@ -72,8 +62,6 @@ def get_imports(notebook_path):
             for line in cell.source.splitlines():
                 stripped = line.strip()
                 if stripped.startswith("import ") or stripped.startswith("from "):
-                    # package_name = extract_package_name(stripped)
-                    # imports.add(package_name)
                     imports.add(stripped)
 
     print("Get_imports: ", list(imports))
@@ -89,7 +77,6 @@ def filter_code_from_imports(code: str) -> str:
                   if not line.strip().startswith("import ")
                   and not line.strip().startswith("from ")]
 
-    # print(f"Code lines: {"\n".join(code_lines)}")
     return "\n".join(code_lines)
 
 
@@ -118,14 +105,13 @@ def split_notebook(notebook_path):
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
             continue
-            # Check if metadata exists in the cell
+        # Check if metadata exists in the cell
         if not metadata_check(cell):
             continue
         cell_lines = cell.source.split("\n")
         cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
         new_source = import_code + "\n\n" + code_lines
-
 
         cells.append({
             "name": cell_name,
