@@ -1,7 +1,7 @@
 from pathlib import Path
 import boto3
 
-BUILD_DIR = Path('modularization/build')
+BUILD_DIR = Path('build')
 BUCKET_NAME = 'module-bucket-a60555b5-a452-46d5-8a9f-5248d2dc41a5'
 s3 = boto3.client('s3')
 
@@ -21,6 +21,8 @@ def upload_zips(zips: list[Path]):
         s3.upload_file(zip, Bucket = BUCKET_NAME, Key = str(zip))
 
 def main():
+    if not BUILD_DIR.exists():
+        return
     notebooks = [path for path in BUILD_DIR.iterdir() if path.is_dir()]
     for notebook in notebooks:
         zips = list_zips(notebook)

@@ -29,7 +29,7 @@ def split_skeleton_wrapper_file() -> (str, str):
     for passing variables between lambdas inside of step functions.
     """
 
-    with open("modularization/wrapper_skeleton.py", "r", encoding="utf-8") as f:
+    with open("wrapper_skeleton.py", "r", encoding="utf-8") as f:
         skeleton = f.read()
         pre, post = skeleton.split("# Main body function")
 
