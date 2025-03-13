@@ -6,7 +6,8 @@ import lambda_archiver
 folder_name = "build"
 
 
-def create_cell_file(notebook_dir: str, cell_name: str, code_lines_only: list[str], id: int) -> str:
+def create_cell_file(notebook_dir: str, cell_name: str,
+                     code_lines_only: list[str], id: int) -> str:
     """
     Creates a python file for one cell in the notebook
     """
@@ -17,6 +18,21 @@ def create_cell_file(notebook_dir: str, cell_name: str, code_lines_only: list[st
 
     print(f"Created {id}_{cell_name}.py")
     return file_name
+
+
+def split_skeleton_wrapper_file() -> (str, str):
+    """
+    Splits the skeleton wrapper file into two parts: pre and post main code body
+
+    skeleton_wrapper.py has the structure required by AWS lamdba and allows
+    for passing variables between lambdas inside of step functions.
+    """
+
+    with open("modularization/wrapper_skeleton.py", "r", encoding="utf-8") as f:
+        skeleton = f.read()
+        pre, post = skeleton.split("# Main body function")
+
+    return pre, post
 
 
 def metadata_check(cell: str) -> bool:
@@ -35,42 +51,58 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def extract_package_name(import_string: str) -> str:
-    package = import_string.split(' ')[1]
-    root_package = package.split('.')[0]
-    return root_package
+def extract_package_names(import_statements: list[str]) -> [str]:
+    """
+    Extracts the package names from an import statements list
+    """
+    root_packages = set()
+    for import_string in import_statements:
+        package = import_string.split(' ')[1]
+        root_package = package.split('.')[0]
+        root_packages.add(root_package)
+    return list(root_packages)
+
 
 def get_imports(notebook_path):
     """
-    Extracts a set of import statements from all code cells in the notebook.
+    Get a set of import statements from all code cells in the notebook.
     """
     with open(notebook_path, "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
 
-    imports = set() # Used a set to avoid duplicates
+    imports = set()  # Used a set to avoid duplicates
     for cell in nb.cells:
         if cell.cell_type == "code":
             for line in cell.source.splitlines():
                 stripped = line.strip()
                 if stripped.startswith("import ") or stripped.startswith("from "):
-                    package_name = extract_package_name(stripped)
-                    imports.add(package_name)
+                    imports.add(stripped)
+
     return list(imports)
 
 
-# Creates metadata file for each cell
-# def build_metadata_file(notebook_name: str, metadata: list[str]) -> None:
-#     # Remove '#' from comments and join metadata lines
-#     cleaned_metadata = "\n".join(line.lstrip("# ").strip() for line in metadata)
-#
-#     # Save directly as a YAML file
-#     yaml_filename = f"modularization/{notebook_name}/metadata.yaml"
-#     try:
-#         with open(yaml_filename, "w", encoding="utf-8") as yaml_file:
-#             yaml_file.write(cleaned_metadata)
-#         print(f"Extracted metadata saved as YAML: {yaml_filename}")
-#     except Exception as e:
-#         print(f"Error saving YAML file for {notebook_name}: {e}")
+def filter_code_from_imports(code: str) -> str:
+    """
+    Filters out import statements from the code
+    """
+    code_lines = code.split("\n")
+    code_lines = [line for line in code_lines
+                  if not line.strip().startswith("import ")
+                  and not line.strip().startswith("from ")]
+
+    # Indentation is needed as cell code will be placed inside of a function
+    indented_code_lines = [f"    {line}" for line in code_lines]
+
+    return "\n".join(indented_code_lines)
+
+
+def construct_import_code(notebook_path: str) -> str:
+    """
+    Aggregates import statements from the whole file and returns as a string
+    """
+
+    import_codelines = get_imports(notebook_path)
+    return "\n".join(import_codelines)
 
 
 def split_notebook(notebook_path):
@@ -83,25 +115,28 @@ def split_notebook(notebook_path):
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
+    import_code = construct_import_code(notebook_path)
+    pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
+
     cells = []
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
             continue
-            # Check if metadata exists in the cell
+        # Check if metadata exists in the cell
         if not metadata_check(cell):
             continue
         cell_lines = cell.source.split("\n")
         cell_name = cell_lines[0].lstrip("# ").strip()
-        # Separate the code lines & metadata
-        # code_lines = []
-        # for line in cell_lines:
-        #     if not line or line.lstrip()[0] != "#":
-        #         code_lines.append(line)
+        code_lines = filter_code_from_imports(cell.source)
+        new_source = import_code + pre_wrapper + \
+            "\n\n" + code_lines + post_wrapper
+
         cells.append({
             "name": cell_name,
-            "code": cell.source
+            "code": new_source
         })
     return cells
+
 
 if __name__ == "__main__":
     with open("modified_notebooks.txt", "r", encoding="utf-8") as f:
@@ -116,7 +151,9 @@ if __name__ == "__main__":
                 lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
             layer_name = f"{notebook_name}-layer"
-            imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
+            packages = extract_package_names(get_imports(nb_file))
+            imports = [x for x in packages if x != 'os' and x != 'warnings']
+            # imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
             lambda_archiver.make_layer_archive(layer_name, imports, root_dir)
         else:
             print(f"Warning: {nb_file} does not exist.")
