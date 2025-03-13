@@ -22,6 +22,7 @@ def upload_zips(zips: list[Path]):
 
 def main():
     if not BUILD_DIR.exists():
+        print("No build directory detected, exiting")
         return
     notebooks = [path for path in BUILD_DIR.iterdir() if path.is_dir()]
     for notebook in notebooks:
