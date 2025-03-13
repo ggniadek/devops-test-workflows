@@ -51,22 +51,21 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def extracted_package_name(import_statements: list[str]) -> [str]:
+def extract_package_names(import_statements: list[str]) -> [str]:
     """
-    Extracts the package name from an import statement
+    Extracts the package names from an import statements list
     """
     root_packages = set()
     for import_string in import_statements:
         package = import_string.split(' ')[1]
         root_package = package.split('.')[0]
         root_packages.add(root_package)
-    print("Extracted_package_name: ", list(root_packages))
     return list(root_packages)
 
 
 def get_imports(notebook_path):
     """
-    Extracts a set of import statements from all code cells in the notebook.
+    Get a set of import statements from all code cells in the notebook.
     """
     with open(notebook_path, "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
@@ -91,7 +90,10 @@ def filter_code_from_imports(code: str) -> str:
                   if not line.strip().startswith("import ")
                   and not line.strip().startswith("from ")]
 
-    return "\n".join(code_lines)
+    # Indentation is needed as cell code will be placed inside of a function
+    indented_code_lines = [f"    {line}" for line in code_lines]
+
+    return "\n".join(indented_code_lines)
 
 
 def construct_import_code(notebook_path: str) -> str:
@@ -149,7 +151,7 @@ if __name__ == "__main__":
                 lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
             layer_name = f"{notebook_name}-layer"
-            packages = extracted_package_name(get_imports(nb_file))
+            packages = extract_package_names(get_imports(nb_file))
             imports = [x for x in packages if x != 'os' and x != 'warnings']
             # imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
             lambda_archiver.make_layer_archive(layer_name, imports, root_dir)
