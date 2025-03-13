@@ -51,16 +51,14 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def extract_package_names(import_statements: list[str]) -> [str]:
+def extract_package_names(import_statement: str) -> [str]:
     """
     Extracts the package names from an import statements list
     """
-    root_packages = set()
-    for import_string in import_statements:
-        package = import_string.split(' ')[1]
-        root_package = package.split('.')[0]
-        root_packages.add(root_package)
-    return list(root_packages)
+    stripped_imports = import_statement.replace("!pip install ", "").split()
+    libraries = [imp.split("==")[0] for imp in stripped_imports]
+
+    return libraries
 
 
 def get_imports(notebook_path):
@@ -119,23 +117,29 @@ def split_notebook(notebook_path):
     pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
 
     cells = []
+    packages = []
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
             continue
         # Check if metadata exists in the cell
-        if not metadata_check(cell):
-            continue
         cell_lines = cell.source.split("\n")
-        cell_name = cell_lines[0].lstrip("# ").strip()
+        if not metadata_check(cell):
+            if cell_lines[0].startswith("!pip install "):
+                packages = extract_package_names(cell.source)
+                continue
+            cell_name = f"global_{i}"
+        else:
+            # cell_lines = cell.source.split("\n")
+            cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
         new_source = import_code + pre_wrapper + \
-            "\n\n" + code_lines + post_wrapper
+            "\n" + code_lines + "\n" + post_wrapper
 
         cells.append({
             "name": cell_name,
             "code": new_source
         })
-    return cells
+    return cells, packages
 
 
 if __name__ == "__main__":
@@ -146,14 +150,11 @@ if __name__ == "__main__":
         if os.path.exists(nb_file):
             notebook_name = os.path.splitext(nb_file)[0].split("/")[-1]
             root_dir = f'build/{notebook_name}'
-            cells = split_notebook(nb_file)
+            cells, packages = split_notebook(nb_file)
             for cell in cells:
                 lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
             layer_name = f"{notebook_name}-layer"
-            packages = extract_package_names(get_imports(nb_file))
-            imports = [x for x in packages if x != 'os' and x != 'warnings']
-            # imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
-            lambda_archiver.make_layer_archive(layer_name, imports, root_dir)
+            lambda_archiver.make_layer_archive(layer_name, packages, root_dir)
         else:
             print(f"Warning: {nb_file} does not exist.")
