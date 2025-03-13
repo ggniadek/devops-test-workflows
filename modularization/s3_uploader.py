@@ -1,7 +1,7 @@
 from pathlib import Path
 import boto3
 
-BUILD_DIR_PATH = Path('/home')
+BUILD_DIR_PATH = Path('./build')
 BUCKET_NAME = 'module-bucket-a60555b5-a452-46d5-8a9f-5248d2dc41a5'
 s3 = boto3.client('s3')
 
@@ -16,11 +16,11 @@ def list_zips(notebook_dir: Path) -> list[Path]:
         zips.append(path)
     return zips
 
-def upload_zips(zips: list[Path]):
+def upload_notebook_zips(zips: list[Path]):
     for zip in zips:
         s3.upload_file(zip, Bucket = BUCKET_NAME, Key = str(zip))
 
-def main():
+def upload_zips():
     test = BUILD_DIR_PATH.iterdir()
     for t in test:
         print(t)
@@ -30,7 +30,4 @@ def main():
     notebooks = [path for path in BUILD_DIR_PATH.iterdir() if path.is_dir()]
     for notebook in notebooks:
         zips = list_zips(notebook)
-        upload_zips(zips)
-
-if __name__ == '__main__':
-    main()
+        upload_notebook_zips(zips)

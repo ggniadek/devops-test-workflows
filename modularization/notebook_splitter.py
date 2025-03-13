@@ -2,6 +2,8 @@ import os
 import nbformat
 
 import lambda_archiver
+import s3_uploader
+
 # Folder, which stores the modularized code
 folder_name = "build"
 essential_imports = "import os\n"
@@ -165,3 +167,5 @@ if __name__ == "__main__":
             lambda_archiver.make_layer_archive(layer_name, packages, root_dir)
         else:
             print(f"Warning: {nb_file} does not exist.")
+
+    s3_uploader.upload_zips()
