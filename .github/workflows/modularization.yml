@@ -47,6 +47,9 @@ jobs:
           
   splitting-ipynb-files:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     name: Split notebooks into separate Python files
     needs: check-notebook-files # To make sure prev job finished before it starts
     steps:
@@ -73,7 +76,7 @@ jobs:
       - name: Run modularization Python script
         run: python modularization/notebook_splitter.py
 
-  # Log into AWS
+      # Log into AWS
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
