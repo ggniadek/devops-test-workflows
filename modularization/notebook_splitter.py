@@ -124,9 +124,10 @@ def split_notebook(notebook_path):
             continue
         # Check if metadata exists in the cell
         if not metadata_check(cell):
-            continue
-        cell_lines = cell.source.split("\n")
-        cell_name = cell_lines[0].lstrip("# ").strip()
+            cell_name = f"global_{i}"
+        else:
+            cell_lines = cell.source.split("\n")
+            cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
         new_source = import_code + pre_wrapper + \
             "\n\n" + code_lines + post_wrapper
