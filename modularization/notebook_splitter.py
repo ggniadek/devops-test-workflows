@@ -152,6 +152,8 @@ def split_notebook(notebook_path):
 
 
 if __name__ == "__main__":
+    print(os.getcwd())
+
     with open("modified_notebooks.txt", "r", encoding="utf-8") as f:
         notebooks = f.read().splitlines()
 
