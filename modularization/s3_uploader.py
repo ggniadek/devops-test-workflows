@@ -1,7 +1,7 @@
 from pathlib import Path
 import boto3
 
-BUILD_DIR_PATH = Path('modularization', 'build')
+BUILD_DIR_PATH = Path('/home/runner/work/devops-test-workflows/devops-test-workflows/build')
 BUCKET_NAME = 'module-bucket-a60555b5-a452-46d5-8a9f-5248d2dc41a5'
 s3 = boto3.client('s3')
 
