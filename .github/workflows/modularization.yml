@@ -70,11 +70,7 @@ jobs:
           python-version: '3.12'
           
       - name: Install dependencies
-        run: pip install -r modularization/requirements.txt 
-        
-  # Splits notebook into cells and saves each cell as a separate python file
-      - name: Run modularization Python script
-        run: python modularization/notebook_splitter.py
+        run: pip install -r modularization/requirements.txt
 
       # Log into AWS
       - name: Configure AWS Credentials
@@ -83,7 +79,11 @@ jobs:
           aws-region: eu-central-1
           role-to-assume: arn:aws:iam::314146339425:role/ModularizationGithubActions
           role-session-name: ModularizationSession
+        
+  # Splits notebook into cells and saves each cell as a separate python file
+      - name: Run modularization Python script
+        run: python modularization/notebook_splitter.py
 
-      - name: Run S3 upload Python script
-        run: python modularization/s3_uploader.py
+
+
         
