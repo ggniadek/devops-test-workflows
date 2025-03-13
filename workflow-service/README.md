@@ -28,6 +28,7 @@ import os
 os.environ['HOME'] = '/tmp'
 ```
 - Defining a `/tmp/data` folder to satisfy a write command inside of the function
+> Ref (second comment    ): https://stackoverflow.com/questions/31938828/aws-lambda-downloading-a-file-and-using-it-in-the-same-function-nodejs
 ```py
 # Ensure the /tmp/data directory exists
 data_dir = '/tmp/data'
@@ -46,9 +47,10 @@ os.makedirs(data_dir, exist_ok=True)
      - `if isinstance(d, str) and (d == 'no data available'):` was changed to `if isinstance(datasets, str) and (datasets == 'no data available'):`
 - ⁠⁠Fixed temporary folder for cache stuff—I’ll explain this later
 - Create an account to get the token: https://cpauth.icos-cp.eu/home/
+- Changed the timeout from Lambda from the default `3s` to `>3m`. In this case, timeout is of no use.
 
 #### To-dos
-- [ ] Verify that the PDF is really created (at the end of the code).
+- [ ] Verify that the PDF is really creat    ed (at the end of the code).
 - [ ] Check if the zipped folder must really be `python` for it to work on AWS Lambda.
 - [ ] There was a blog that hinted me for the MacOS binary compilation problem, I am not sure if it is the one below. Confirm this.
 
