@@ -72,6 +72,14 @@ jobs:
   # Splits notebook into cells and saves each cell as a separate python file
       - name: Run modularization Python script
         run: python modularization/notebook_splitter.py
+
+  # Log into AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::314146339425:role/ModularizationGithubActions
+          role-session-name: ModularizationSession
         
   # This step can be removed later
   # & files created directly combined with what Illia is implementing in Sprint: Pączek
