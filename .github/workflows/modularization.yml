@@ -83,4 +83,7 @@ jobs:
           aws-region: eu-central-1
           role-to-assume: arn:aws:iam::314146339425:role/ModularizationGithubActions
           role-session-name: ModularizationSession
+
+      - name: Run S3 upload Python script
+        run: python modularization/s3_uploader.py
         
