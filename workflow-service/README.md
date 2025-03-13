@@ -48,6 +48,7 @@ os.makedirs(data_dir, exist_ok=True)
 - ⁠⁠Fixed temporary folder for cache stuff—I’ll explain this later
 - Create an account to get the token: https://cpauth.icos-cp.eu/home/
 - Changed the timeout from Lambda from the default `3s` to `>3m`. In this case, timeout is of no use.
+- Reference for 
 
 #### To-dos
 - [ ] Verify that the PDF is really creat    ed (at the end of the code).
