@@ -1,7 +1,7 @@
 from pathlib import Path
 import boto3
 
-BUILD_DIR_PATH = Path('/home/runner/work/devops-test-workflows/devops-test-workflows/build')
+BUILD_DIR_PATH = Path('/home')
 BUCKET_NAME = 'module-bucket-a60555b5-a452-46d5-8a9f-5248d2dc41a5'
 s3 = boto3.client('s3')
 
@@ -21,7 +21,7 @@ def upload_zips(zips: list[Path]):
         s3.upload_file(zip, Bucket = BUCKET_NAME, Key = str(zip))
 
 def main():
-    test = Path('.').iterdir()
+    test = BUILD_DIR_PATH.iterdir()
     for t in test:
         print(t)
     if not BUILD_DIR_PATH.exists():
