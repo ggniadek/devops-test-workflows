@@ -21,7 +21,7 @@ def upload_zips(zips: list[Path]):
         s3.upload_file(zip, Bucket = BUCKET_NAME, Key = str(zip))
 
 def main():
-    test = Path('.').iterdir()
+    test = Path('./modularization').iterdir()
     for t in test:
         print(t)
     if not BUILD_DIR_PATH.exists():
