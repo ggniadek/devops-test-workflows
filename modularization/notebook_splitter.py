@@ -4,7 +4,8 @@ import nbformat
 import lambda_archiver
 # Folder, which stores the modularized code
 folder_name = "build"
-
+essential_imports = "import os\n"
+env_home = "\nos.environ['HOME'] = '/tmp'"
 
 def create_cell_file(notebook_dir: str, cell_name: str,
                      code_lines_only: list[str], id: int) -> str:
@@ -76,6 +77,7 @@ def get_imports(notebook_path):
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     imports.add(stripped)
 
+    imports.remove("import os")
     return list(imports)
 
 
@@ -136,7 +138,8 @@ def split_notebook(notebook_path):
         else:
             cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
-        new_source = import_code + pre_wrapper + \
+        new_source = essential_imports + import_code \
+            + env_home + "\n\n" + pre_wrapper + \
             "\n" + code_lines + "\n" + post_wrapper
 
         cells.append({
