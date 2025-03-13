@@ -36,9 +36,25 @@ def metadata_check(cell: str) -> bool:
         return False
 
 
-def extract_package_name(import_string: str) -> str:
+def extracted_package_name(import_statements: list[str]) -> [str]:
+    """
+    Extracts the package name from an import statement
+    """
+    root_packages = set()
+    for import_string in import_statements:
+        package = import_string.split(' ')[1]
+        root_package = package.split('.')[0]
+        root_packages.add(root_package)
+    return list(root_packages)
+
+
+def extract_package_name(import_string: list[str]) -> str:
+    """
+    Extracts the package name from an import statement
+    """
     package = import_string.split(' ')[1]
     root_package = package.split('.')[0]
+
     return root_package
 
 
@@ -57,7 +73,21 @@ def get_imports(notebook_path):
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     package_name = extract_package_name(stripped)
                     imports.add(package_name)
+                    # imports.add(stripped)
+
+    print("Get_imports: ", list(imports))
     return list(imports)
+
+
+def filter_code_from_imports(code: str) -> str:
+    """
+    Filters out import statements from the code
+    """
+    code_lines = code.split("\n")
+    code_lines = [line for line in code_lines
+                  if not line.strip().startswith("import ")
+                  and not line.strip().startswith("from ")]
+    return code_lines
 
 
 def split_notebook(notebook_path):
@@ -70,6 +100,8 @@ def split_notebook(notebook_path):
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
+    # imported_packages = get_imports(nb)
+
     cells = []
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
@@ -79,10 +111,11 @@ def split_notebook(notebook_path):
             continue
         cell_lines = cell.source.split("\n")
         cell_name = cell_lines[0].lstrip("# ").strip()
+        code_lines = filter_code_from_imports(cell.source)
 
         cells.append({
             "name": cell_name,
-            "code": cell.source
+            "code": "\n".join(code_lines)
         })
     return cells
 
@@ -96,10 +129,12 @@ if __name__ == "__main__":
             notebook_name = os.path.splitext(nb_file)[0].split("/")[-1]
             root_dir = f'build/{notebook_name}'
             cells = split_notebook(nb_file)
-            for cell in cells:
-                lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
+            # for cell in cells:
+                # lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
             layer_name = f"{notebook_name}-layer"
+            # packages = extracted_package_name(get_imports(nb_file))
+            # imports = [x for x in packages if x != 'os' and x != 'warnings']
             imports = [x for x in get_imports(nb_file) if x != 'os' and x != 'warnings']
             lambda_archiver.make_layer_archive(layer_name, imports, root_dir)
         else:
