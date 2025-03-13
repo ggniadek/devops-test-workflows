@@ -20,6 +20,21 @@ def create_cell_file(notebook_dir: str, cell_name: str,
     return file_name
 
 
+def split_skeleton_wrapper_file() -> (str, str):
+    """
+    Splits the skeleton wrapper file into two parts: pre and post main code body
+
+    skeleton_wrapper.py has the structure required by AWS lamdba and allows
+    for passing variables between lambdas inside of step functions.
+    """
+
+    with open("modularization/wrapper_skeleton.py", "r", encoding="utf-8") as f:
+        skeleton = f.read()
+        pre, post = skeleton.split("# Main body function")
+
+    return pre, post
+
+
 def metadata_check(cell: str) -> bool:
     """
     Checks if metadata was provided for the cell
@@ -64,7 +79,6 @@ def get_imports(notebook_path):
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     imports.add(stripped)
 
-    print("Get_imports: ", list(imports))
     return list(imports)
 
 
@@ -100,6 +114,7 @@ def split_notebook(notebook_path):
     os.makedirs(notebook_dir, exist_ok=True)
 
     import_code = construct_import_code(notebook_path)
+    pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
 
     cells = []
     for i, cell in enumerate(nb.cells):
@@ -111,7 +126,8 @@ def split_notebook(notebook_path):
         cell_lines = cell.source.split("\n")
         cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
-        new_source = import_code + "\n\n" + code_lines
+        new_source = import_code + pre_wrapper + \
+            "\n\n" + code_lines + post_wrapper
 
         cells.append({
             "name": cell_name,

@@ -1,5 +1,6 @@
 vars_dict = {}
 
+
 def lambda_handler(event, context):
     # Handling ingestion of previously defined variables
     # Allows for the variables to be used.
