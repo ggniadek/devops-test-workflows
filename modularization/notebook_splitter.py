@@ -113,7 +113,9 @@ def split_notebook(notebook_path):
     notebook_dir = f"{folder_name}/{notebook_name}"
     os.makedirs(notebook_dir, exist_ok=True)
 
+    # Gather import statements from the notebook
     import_code = construct_import_code(notebook_path)
+    # Divide the skeleton wrapper file (Goncalo) into two parts
     pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
 
     cells = []
@@ -124,12 +126,14 @@ def split_notebook(notebook_path):
         # Check if metadata exists in the cell
         cell_lines = cell.source.split("\n")
         if not metadata_check(cell):
+            # Type A: Installation cell
             if cell_lines[0].startswith("!pip install "):
                 packages = extract_package_names(cell.source)
                 continue
+            # Type B: Global variables definition cell (without a name)
             cell_name = f"global_{i}"
+        # Type C: Standard cells
         else:
-            # cell_lines = cell.source.split("\n")
             cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
         new_source = import_code + pre_wrapper + \
