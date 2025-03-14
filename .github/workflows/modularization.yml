@@ -79,9 +79,6 @@ jobs:
           aws-region: eu-central-1
           role-to-assume: arn:aws:iam::314146339425:role/ModularizationGithubActions
           role-session-name: ModularizationSession
-
-      - name: Get ENV
-        run: env | sort
         
   # Splits notebook into cells and saves each cell as a separate python file
       - name: Run modularization Python script
