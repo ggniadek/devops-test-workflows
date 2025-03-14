@@ -79,7 +79,7 @@ def get_imports(notebook_path):
                 if stripped.startswith("import ") or stripped.startswith("from "):
                     imports.add(stripped)
 
-    imports.remove("import os")
+    # imports.remove("import os")
     return list(imports)
 
 
