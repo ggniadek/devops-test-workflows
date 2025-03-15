@@ -106,6 +106,25 @@ def construct_import_code(notebook_path: str) -> str:
     import_codelines = get_imports(notebook_path)
     return "\n".join(import_codelines)
 
+def handle_import_modules_injection(body, packages) -> str:
+    delimiter = 'or k.startswith("context")'
+    parts = body.split(delimiter)
+    if (len(parts) < 3):
+        return body
+    
+    
+    pre = delimiter.join(parts[:2])
+    post = parts[2]
+    code_lines = []
+    indent = " " * 12
+    for package in packages:
+        code_lines.append(f'{indent}or k.startswith("{package}")')
+        
+    # Indentation is needed as cell code will be placed inside of a function
+    indented_code_lines = [f"{line}" for line in code_lines]
+
+    return pre + "\n" + "\n".join(indented_code_lines) + post
+
 
 def split_notebook(notebook_path):
     with open(notebook_path, "r", encoding="utf-8") as f:
@@ -121,7 +140,7 @@ def split_notebook(notebook_path):
     import_code = construct_import_code(notebook_path)
     # Divide the skeleton wrapper file (Goncalo) into two parts
     pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
-
+    
     cells = []
     packages = []
     for i, cell in enumerate(nb.cells):
@@ -140,6 +159,9 @@ def split_notebook(notebook_path):
         else:
             cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
+
+        post_wrapper = handle_import_modules_injection(post_wrapper, packages)
+        
         new_source = essential_imports + import_code \
             + env_home + "\n\n" + pre_wrapper + \
             "\n" + code_lines + "\n" + post_wrapper
