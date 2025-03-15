@@ -137,7 +137,7 @@ def split_notebook(notebook_path):
     # Divide the skeleton wrapper file (Goncalo) into two parts
     pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
     
-    post_injected = handle_import_modules_injection(post_wrapper, notebook_path)
+    post_wrapper = handle_import_modules_injection(post_wrapper, notebook_path)
 
     cells = []
     packages = []
