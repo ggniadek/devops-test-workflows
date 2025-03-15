@@ -34,7 +34,7 @@ def upload_zips():
     notebooks = [path for path in BUILD_DIR_PATH.iterdir() if path.is_dir()]
     print(f"Found {len(notebooks)} notebooks")
     for notebook in notebooks:
-        # zips = list_zips(notebook)
-        # print(f"Uploading {notebook.name} to S3...")
-        # upload_notebook_zips(organization_name, notebook, zips)
+        zips = list_zips(notebook)
+        print(f"Uploading {notebook.name} to S3...")
+        upload_notebook_zips(organization_name, notebook, zips)
         print(f"Uploaded {notebook.name} to S3")
