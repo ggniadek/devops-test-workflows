@@ -1,13 +1,15 @@
 import os
 import nbformat
+import ast
 
 import lambda_archiver
 import s3_uploader
+import get_import_modules
 
 # Folder, which stores the modularized code
 folder_name = "build"
 essential_imports = "import os\n"
-env_home = "\nos.environ['HOME'] = '/tmp'"
+env_home = "os.environ['HOME'] = '/tmp'\n"
 
 def create_cell_file(notebook_dir: str, cell_name: str,
                      code_lines_only: list[str], id: int) -> str:
@@ -22,6 +24,20 @@ def create_cell_file(notebook_dir: str, cell_name: str,
     print(f"Created {id}_{cell_name}.py")
     return file_name
 
+def handle_import_modules_injection(body, notebook_path) -> str:
+    delimiter = 'or k.startswith("context")'
+    parts = body.split(delimiter, 2)
+    pre = delimiter.join(parts[:2])
+    post = parts[2]
+    modules = get_import_modules(notebook_path)
+    code_lines = []
+    for module in modules:
+        code_lines.append(f'or k.startswith("{module}")')
+        
+    # Indentation is needed as cell code will be placed inside of a function
+    indented_code_lines = [f"    {line}" for line in code_lines]
+
+    return pre + "\n".join(indented_code_lines) + post
 
 def split_skeleton_wrapper_file() -> (str, str):
     """
@@ -35,7 +51,7 @@ def split_skeleton_wrapper_file() -> (str, str):
         skeleton = f.read()
         pre, post = skeleton.split("# Main body function")
 
-    return pre, post
+    return pre, post_injected
 
 
 def metadata_check(cell: str) -> bool:
@@ -82,7 +98,6 @@ def get_imports(notebook_path):
     # imports.remove("import os")
     return list(imports)
 
-
 def filter_code_from_imports(code: str) -> str:
     """
     Filters out import statements from the code
@@ -121,12 +136,32 @@ def split_notebook(notebook_path):
     import_code = construct_import_code(notebook_path)
     # Divide the skeleton wrapper file (Goncalo) into two parts
     pre_wrapper, post_wrapper = split_skeleton_wrapper_file()
+    
+    post_injected = handle_import_modules_injection(post_wrapper, notebook_path)
 
     cells = []
     packages = []
+    import_modules = []
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
-            continue
+            try:
+                tree = ast.parse(cell.source)
+            except Exception as e:
+                # Skip cells that can't be parsed
+                continue
+            
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    # For "import module [as alias]" statements
+                    for alias in node.names:
+                        # alias.name gives you the module (or package) name
+                        import_modules.add(alias.name)
+                elif isinstance(node, ast.ImportFrom):
+                    # For "from module import something" statements
+                    if node.module:
+                        import_modules.add(node.module)
+                        
+
         # Check if metadata exists in the cell
         cell_lines = cell.source.split("\n")
         if not metadata_check(cell):
@@ -140,15 +175,15 @@ def split_notebook(notebook_path):
         else:
             cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
-        new_source = essential_imports + import_code \
-            + env_home + "\n\n" + pre_wrapper + \
+        new_source = essential_imports + env_home + import_code \
+            + "\n\n" + pre_wrapper + \
             "\n" + code_lines + "\n" + post_wrapper
 
         cells.append({
             "name": cell_name,
             "code": new_source
         })
-    return cells, packages
+    return cells, packages, import_modules
 
 
 if __name__ == "__main__":
@@ -161,7 +196,7 @@ if __name__ == "__main__":
         if os.path.exists(nb_file):
             notebook_name = os.path.splitext(nb_file)[0].split("/")[-1]
             root_dir = f'build/{notebook_name}'
-            cells, packages = split_notebook(nb_file)
+            cells, packages, import_modules = split_notebook(nb_file)
             for cell in cells:
                 lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
