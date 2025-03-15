@@ -3,3 +3,4 @@ venv
 .DS_Store
 modularization/modified_notebooks.txt
 build
+__pycache__

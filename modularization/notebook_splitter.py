@@ -1,5 +1,6 @@
 import os
 import nbformat
+import re
 
 import lambda_archiver
 import s3_uploader
@@ -106,7 +107,17 @@ def construct_import_code(notebook_path: str) -> str:
     import_codelines = get_imports(notebook_path)
     return "\n".join(import_codelines)
 
-def handle_import_modules_injection(body, packages) -> str:
+def extract_libraries(code: str):
+    pattern_import = r'^\s*import\s+([^\s,]+)'
+    pattern_from = r'^\s*from\s+([^\s]+)\s+import'
+    
+    # Find all occurrences in multiline mode.
+    libraries = set(re.findall(pattern_import, code, flags=re.MULTILINE))
+    libraries.update(re.findall(pattern_from, code, flags=re.MULTILINE))
+    
+    return libraries
+
+def handle_import_modules_injection(body, packages: set[str]) -> str:
     delimiter = 'or k.startswith("context")'
     parts = body.split(delimiter)
     if (len(parts) < 3):
@@ -117,6 +128,8 @@ def handle_import_modules_injection(body, packages) -> str:
     post = parts[2]
     code_lines = []
     indent = " " * 12
+    
+    code_lines.append(f'{indent}or k.startswith("os")') # This one is added later  
     for package in packages:
         code_lines.append(f'{indent}or k.startswith("{package}")')
         
@@ -159,8 +172,9 @@ def split_notebook(notebook_path):
         else:
             cell_name = cell_lines[0].lstrip("# ").strip()
         code_lines = filter_code_from_imports(cell.source)
-
-        post_wrapper = handle_import_modules_injection(post_wrapper, packages)
+        
+        libraries = extract_libraries(essential_imports + import_code)
+        post_wrapper = handle_import_modules_injection(post_wrapper, libraries)
         
         new_source = essential_imports + import_code \
             + env_home + "\n\n" + pre_wrapper + \
