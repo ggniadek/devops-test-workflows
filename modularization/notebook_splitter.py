@@ -8,7 +8,7 @@ import s3_uploader
 # Folder, which stores the modularized code
 folder_name = "build"
 essential_imports = "import os\n"
-env_home = "\nos.environ['HOME'] = '/tmp'"
+env_home = "os.environ['HOME'] = '/tmp'\n"
 
 def create_cell_file(notebook_dir: str, cell_name: str,
                      code_lines_only: list[str], id: int) -> str:
@@ -176,8 +176,8 @@ def split_notebook(notebook_path):
         libraries = extract_libraries(essential_imports + import_code)
         post_wrapper = handle_import_modules_injection(post_wrapper, libraries)
         
-        new_source = essential_imports + import_code \
-            + env_home + "\n\n" + pre_wrapper + \
+        new_source = essential_imports + env_home + import_code \
+            + "\n\n" + pre_wrapper + \
             "\n" + code_lines + "\n" + post_wrapper
 
         cells.append({
