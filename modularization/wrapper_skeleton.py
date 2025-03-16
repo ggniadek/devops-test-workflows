@@ -80,7 +80,3 @@ def lambda_handler(event, context):
 
     for key, value in local_vars_dict_curr.items():
         vars_dict.update({key: value})
-
-    return {
-        "metadata": make_serializable(vars_dict)
-    }

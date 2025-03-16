@@ -184,6 +184,17 @@ def split_notebook(notebook_path):
             + "\n\n" + pre_wrapper + \
             "\n" + code_lines + "\n" + post_wrapper
 
+        # This is an exception for the last cell not to export the variables.
+        # This is really a corner-case where we should at least make everything "automatically"
+        # deployable. We should have a way of doing this within AWS StepFunctions in a later process.
+        exclude_name = 'use-case-icos-plot-time-series'
+        if cell_name != exclude_name:
+            new_source += """
+    return {
+        "metadata": make_serializable(vars_dict)
+    }
+            """
+        
         cells.append({
             "name": cell_name,
             "code": new_source
