@@ -22,6 +22,10 @@ def make_serializable(obj):
             return str(obj)
 
 def lambda_handler(event, context):
+     # Ensure the /tmp/data directory exists
+    data_dir = '/tmp/data'
+    os.makedirs(data_dir, exist_ok=True)
+
     # Handling ingestion of previously defined variables
     # Allows for the variables to be used.
     if "metadata" in event:
