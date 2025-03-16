@@ -1,25 +1,25 @@
 vars_dict = {}
 
 def make_serializable(obj):
-        """Recursively convert non-serializable objects (like DataFrames) into serializable ones."""
-        try:
-            json.dumps(obj)
-            return obj
-        except (TypeError, OverflowError):
-            if isinstance(obj, pd.DataFrame):
-                # Convert DataFrame to a list of records (or use another orient if preferred)
-                return obj.to_dict(orient='records')
-            elif isinstance(obj, dict):
-                return {k: make_serializable(v) for k, v in obj.items()}
-            elif isinstance(obj, list):
-                return [make_serializable(item) for item in obj]
-            elif hasattr(obj, 'to_dict') and callable(obj.to_dict):
-                return make_serializable(obj.to_dict())
-            elif hasattr(obj, '__dict__'):
-                return make_serializable(obj.__dict__)
-            else:
-                # As a last resort, return the string representation
-                return str(obj)
+    """Recursively convert non-serializable objects (like DataFrames) into serializable ones."""
+    try:
+        json.dumps(obj)
+        return obj
+    except (TypeError, OverflowError):
+        if isinstance(obj, pd.DataFrame):
+            # Convert DataFrame to a list of records (or use another orient if preferred)
+            return obj.to_dict(orient='records')
+        elif isinstance(obj, dict):
+            return {k: make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [make_serializable(item) for item in obj]
+        elif hasattr(obj, 'to_dict') and callable(obj.to_dict):
+            return make_serializable(obj.to_dict())
+        elif hasattr(obj, '__dict__'):
+            return make_serializable(obj.__dict__)
+        else:
+            # As a last resort, return the string representation
+            return str(obj)
 
 def lambda_handler(event, context):
     # Handling ingestion of previously defined variables
