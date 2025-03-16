@@ -1,5 +1,11 @@
 vars_dict = {}
 
+def is_json_serializable(obj) -> bool:
+    try:
+        json.dumps(obj)
+        return True
+    except (TypeError, OverflowError):
+        return False
 
 def lambda_handler(event, context):
     # Handling ingestion of previously defined variables
@@ -23,6 +29,7 @@ def lambda_handler(event, context):
             or k.startswith("event")
             or k.startswith("metadata")
             or k.startswith("context")
+            or k.startswith("is_json_serializable")
         )
     }
 
@@ -39,6 +46,8 @@ def lambda_handler(event, context):
             or k.startswith("lambda_handler")
             or k.startswith("vars_dict")
             or k.startswith("context")
+            or k.startswith("types")
+            or k.startswith("is_json_serializable")
         )
     }
 
@@ -53,6 +62,10 @@ def lambda_handler(event, context):
 
     for key, value in local_vars_dict_curr.items():
         vars_dict.update({key: value})
+        
+    for key, value in vars_dict.items():
+        if not is_json_serializable(value):
+            vars_dict.update({key: vars_dict[key].to_dict()})
 
     return {
         "metadata": vars_dict

@@ -7,7 +7,7 @@ import s3_uploader
 
 # Folder, which stores the modularized code
 folder_name = "build"
-essential_imports = "import os\n"
+essential_imports = "import os\nimport json\nimport types\n"
 env_home = "os.environ['HOME'] = '/tmp'\n"
 
 def create_cell_file(notebook_dir: str, cell_name: str,
