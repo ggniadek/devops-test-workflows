@@ -83,7 +83,6 @@ def get_imports(notebook_path):
     # imports.remove("import os")
     return list(imports)
 
-
 def filter_code_from_imports(code: str) -> str:
     """
     Filters out import statements from the code
@@ -110,10 +109,16 @@ def construct_import_code(notebook_path: str) -> str:
 def extract_libraries(code: str):
     pattern_import = r'^\s*import\s+([^\s,]+)'
     pattern_from = r'^\s*from\s+([^\s]+)\s+import'
+    pattern_full_module = r'^\s*(?:import|from)\s+([A-Za-z_]\w*)'
+    pattern_full_import = r'^\s*(?:import\s+|from\s+[^\s]+\s+import\s+)([A-Za-z_]\w*(?:\s*,\s*[A-Za-z_]\w*)*)'
+    pattern_as = r'^\s*import\s+(?:[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\s+as\s+([A-Za-z_]\w*)'
     
     # Find all occurrences in multiline mode.
     libraries = set(re.findall(pattern_import, code, flags=re.MULTILINE))
     libraries.update(re.findall(pattern_from, code, flags=re.MULTILINE))
+    libraries.update(re.findall(pattern_full_module, code, flags=re.MULTILINE))
+    libraries.update(re.findall(pattern_full_import, code, flags=re.MULTILINE))
+    libraries.update(re.findall(pattern_as, code, flags=re.MULTILINE))
     
     return libraries
 
@@ -123,13 +128,11 @@ def handle_import_modules_injection(body, packages: set[str]) -> str:
     if (len(parts) < 3):
         return body
     
-    
     pre = delimiter.join(parts[:2])
     post = parts[2]
     code_lines = []
     indent = " " * 12
     
-    code_lines.append(f'{indent}or k.startswith("os")') # This one is added later  
     for package in packages:
         code_lines.append(f'{indent}or k.startswith("{package}")')
         
