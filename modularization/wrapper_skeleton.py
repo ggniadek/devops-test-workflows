@@ -20,7 +20,7 @@ def lambda_handler(event, context):
         if not (
             k.startswith("key")
             or k.startswith("value")
-            # or k.startswith("event")  # Commented out
+            or k.startswith("event")
             or k.startswith("metadata")
             or k.startswith("context")
         )
