@@ -7,7 +7,7 @@ import s3_uploader
 
 # Folder, which stores the modularized code
 folder_name = "build"
-essential_imports = "import os\nimport json\nimport types"
+essential_imports = "import os\nimport json\nimport types\n"
 # + "import boto3\nfrom datetime import datetime\nimport math" # Not sure how to only import when "needed"
 env_home = "os.environ['HOME'] = '/tmp'\n"
 
