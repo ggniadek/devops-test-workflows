@@ -76,10 +76,6 @@ def lambda_handler(event, context):
 
     for key, value in local_vars_dict_curr.items():
         vars_dict.update({key: value})
-        
-    for key, value in vars_dict.items():
-        if not is_json_serializable(value):
-            vars_dict.update({key: vars_dict[key].to_dict()})
 
     return {
         "metadata": make_serializable(vars_dict)
