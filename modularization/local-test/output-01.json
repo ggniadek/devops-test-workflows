@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "param_cpauth_token": "cpauthToken=WzE3NDIyMTc3MjQ1NzQsImdvbmNhbG9qZmVycmVpcmE5MkBnbWFpbC5jb20iLCJQYXNzd29yZCJdHjBmAjEAvSx7Kg6prsznGcx7PrI7oPOEWYiEsuQK3EO4AYEP28b1qoYen+nPtPcbThuQXmUdAjEAsSAou8nKSoLsZfqw9IQtzG6JCLfrzgFkj9lsUGubXSywXTPTn4TZJ5DpGQARpRE4",
+    "param_ecosystem_type": "Wetland",
+    "param_data_type": "ETC L2 Fluxes",
+    "param_variable": "CO2",
+    "stations": {
+      "uri": {
+        "0": "http://meta.icos-cp.eu/resources/stations/ES_SE-Sto",
+        "1": "http://meta.icos-cp.eu/resources/stations/ES_DE-Amv",
+        "24": "http://meta.icos-cp.eu/resources/stations/ES_SE-Deg",
+        "73": "http://meta.icos-cp.eu/resources/stations/ES_FR-LGt",
+        "99": "http://meta.icos-cp.eu/resources/stations/ES_SE-Myc",
+        "129": "http://meta.icos-cp.eu/resources/stations/ES_DE-SfN",
+        "148": "http://meta.icos-cp.eu/resources/stations/ES_CZ-wet",
+        "163": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF"
+      },
+      "id": {
+        "0": "SE-Sto",
+        "1": "DE-Amv",
+        "24": "SE-Deg",
+        "73": "FR-LGt",
+        "99": "SE-Myc",
+        "129": "DE-SfN",
+        "148": "CZ-wet",
+        "163": "GL-ZaF"
+      },
+      "name": {
+        "0": "Abisko-Stordalen Palsa Bog",
+        "1": "Amtsvenn",
+        "24": "Degero",
+        "73": "La Guette",
+        "99": "Mycklemossen",
+        "129": "Schechenfilz Nord",
+        "148": "Trebon",
+        "163": "Zackenberg Fen"
+      },
+      "icosClass": {
+        "0": "2",
+        "1": "Associated",
+        "24": "2",
+        "73": "Associated",
+        "99": "2",
+        "129": "Associated",
+        "148": "Associated",
+        "163": "2"
+      },
+      "country": {
+        "0": "SE",
+        "1": "DE",
+        "24": "SE",
+        "73": "FR",
+        "99": "SE",
+        "129": "DE",
+        "148": "CZ",
+        "163": "GL"
+      },
+      "lat": {
+        "0": "68.35594",
+        "1": "52.1757",
+        "24": "64.18203",
+        "73": "47.322918",
+        "99": "58.36503",
+        "129": "47.80639",
+        "148": "49.02465",
+        "163": "74.48152"
+      },
+      "lon": {
+        "0": "19.045208",
+        "1": "6.95537",
+        "24": "19.55654",
+        "73": "2.284102",
+        "99": "12.1694",
+        "129": "11.3275",
+        "148": "14.77035",
+        "163": "-20.555773"
+      },
+      "elevation": {
+        "0": "351.893",
+        "1": "35.0",
+        "24": "270.0",
+        "73": "153.0",
+        "99": "81.0",
+        "129": "590.0",
+        "148": "426.0",
+        "163": "42.0"
+      },
+      "stationTheme": {
+        "0": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "1": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "24": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "73": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "99": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "129": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "148": "http://meta.icos-cp.eu/ontologies/cpmeta/ES",
+        "163": "http://meta.icos-cp.eu/ontologies/cpmeta/ES"
+      },
+      "firstName": {
+        "0": "Erik",
+        "1": "Mana",
+        "24": "Matthias",
+        "73": "Christophe",
+        "99": "Per",
+        "129": "Hans Peter",
+        "148": "Jiri",
+        "163": "Rasmus"
+      },
+      "lastName": {
+        "0": "Lundin",
+        "1": "Gharun",
+        "24": "Peichl",
+        "73": "Guimbaud",
+        "99": "Weslien",
+        "129": "Schmid",
+        "148": "Dusek",
+        "163": "Jensen"
+      },
+      "email": {
+        "0": "erik.lundin@polar.se",
+        "1": "mana.gharun@uni-muenster.de",
+        "24": "matthias.peichl@slu.se",
+        "73": "christophe.guimbaud@cnrs-orleans.fr",
+        "99": "per.weslien@gu.se",
+        "129": "hape.schmid@kit.edu",
+        "148": "dusek.j@czechglobe.cz",
+        "163": "raje@ecos.au.dk"
+      },
+      "siteType": {
+        "0": "Wetland",
+        "1": "Wetland",
+        "24": "Wetland",
+        "73": "Wetland",
+        "99": "Wetland",
+        "129": "Wetland",
+        "148": "Wetland",
+        "163": "Wetland"
+      },
+      "project": {
+        "0": "ICOS",
+        "1": "ICOS",
+        "24": "ICOS",
+        "73": "ICOS",
+        "99": "ICOS",
+        "129": "ICOS",
+        "148": "ICOS",
+        "163": "ICOS"
+      },
+      "theme": {
+        "0": "ES",
+        "1": "ES",
+        "24": "ES",
+        "73": "ES",
+        "99": "ES",
+        "129": "ES",
+        "148": "ES",
+        "163": "ES"
+      }
+    },
+    "stations_id_list": [
+      "SE-Sto",
+      "DE-Amv",
+      "SE-Deg",
+      "FR-LGt",
+      "SE-Myc",
+      "DE-SfN",
+      "CZ-wet",
+      "GL-ZaF"
+    ]
+  }
+}

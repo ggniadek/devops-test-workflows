@@ -1,0 +1,140 @@
+{
+  "metadata": {
+    "param_cpauth_token": "cpauthToken=WzE3NDIyMTc3MjQ1NzQsImdvbmNhbG9qZmVycmVpcmE5MkBnbWFpbC5jb20iLCJQYXNzd29yZCJdHjBmAjEAvSx7Kg6prsznGcx7PrI7oPOEWYiEsuQK3EO4AYEP28b1qoYen+nPtPcbThuQXmUdAjEAsSAou8nKSoLsZfqw9IQtzG6JCLfrzgFkj9lsUGubXSywXTPTn4TZJ5DpGQARpRE4",
+    "param_ecosystem_type": "Wetland",
+    "param_data_type": "ETC L2 Fluxes",
+    "param_variable": "CO2",
+    "dobj_list": [
+      "https://meta.icos-cp.eu/objects/pPnlUbSqmjVMEf0SjkOpoUCX",
+      "https://meta.icos-cp.eu/objects/O2xlwXt9xQXh-gdgR-Htn-G3",
+      "https://meta.icos-cp.eu/objects/vPRu_oXo_HsOXRP93cnmgokv",
+      "https://meta.icos-cp.eu/objects/UaSQvRbCQE-bOsSUxACy7kMI",
+      "https://meta.icos-cp.eu/objects/iBFvE3TcDT_jOrCFhTXKLhKT"
+    ],
+    "station_id": "GL-ZaF",
+    "s": {
+      "_stationId": "GL-ZaF",
+      "_valid": true,
+      "_name": "Zackenberg Fen",
+      "_theme": "ES",
+      "_icosclass": "2",
+      "_siteType": null,
+      "_lat": 74.48152,
+      "_lon": -20.555773,
+      "_eas": 42,
+      "_firstName": "Rasmus",
+      "_lastName": "Jensen",
+      "_email": "raje@ecos.au.dk",
+      "_country": "GL",
+      "_project": [
+        "ICOS"
+      ],
+      "_uri": [
+        "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF"
+      ],
+      "_datacheck": true,
+      "_data": [
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcArchiveProduct",
+          "datalevel": "2",
+          "specLabel": "ETC L2 ARCHIVE",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/hX_ewlxHBieuUvb21PEh3Prg",
+          "timeStart": "2022-01-01T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "14624709",
+          "samplingheight": ""
+        },
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2AuxData",
+          "datalevel": "2",
+          "specLabel": "ETC L2 AuxData",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/V_xpHm9f-bzrgTVVqBenRcUp",
+          "timeStart": "2022-11-23T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "1745302",
+          "samplingheight": ""
+        },
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2Fluxes",
+          "datalevel": "2",
+          "specLabel": "ETC L2 Fluxes",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/iBFvE3TcDT_jOrCFhTXKLhKT",
+          "timeStart": "2022-01-01T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "3485604",
+          "samplingheight": ""
+        },
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2Meteosens",
+          "datalevel": "2",
+          "specLabel": "ETC L2 Meteosens",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/UteT9l5kMjZvTQ7H_xy0KHLq",
+          "timeStart": "2022-01-01T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "3421196",
+          "samplingheight": ""
+        },
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2Meteo",
+          "datalevel": "2",
+          "specLabel": "ETC L2 Meteo",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/SttGHobzXSsccIy5uYRbHQZI",
+          "timeStart": "2022-01-01T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "1562406",
+          "samplingheight": ""
+        },
+        {
+          "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2Fluxnet",
+          "datalevel": "2",
+          "specLabel": "ETC L2 Fluxnet (half-hourly)",
+          "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+          "dobj": "https://meta.icos-cp.eu/objects/lzZDXpBGP5uT5Qfzcas4lKXF",
+          "timeStart": "2023-01-01T00:00:00Z",
+          "timeEnd": "2024-09-01T00:00:00Z",
+          "bytes": "5161843",
+          "samplingheight": ""
+        }
+      ],
+      "_products": [
+        {
+          "0": "ETC L2 ARCHIVE"
+        },
+        {
+          "0": "ETC L2 AuxData"
+        },
+        {
+          "0": "ETC L2 Fluxes"
+        },
+        {
+          "0": "ETC L2 Meteosens"
+        },
+        {
+          "0": "ETC L2 Meteo"
+        },
+        {
+          "0": "ETC L2 Fluxnet (half-hourly)"
+        }
+      ],
+      "siteType": "Wetland"
+    },
+    "datasets": [
+      {
+        "spec": "http://meta.icos-cp.eu/resources/cpmeta/etcL2Fluxes",
+        "datalevel": "2",
+        "specLabel": "ETC L2 Fluxes",
+        "station": "http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF",
+        "dobj": "https://meta.icos-cp.eu/objects/iBFvE3TcDT_jOrCFhTXKLhKT",
+        "timeStart": "2022-01-01T00:00:00Z",
+        "timeEnd": "2024-09-01T00:00:00Z",
+        "bytes": "3485604",
+        "samplingheight": ""
+      }
+    ]
+  }
+}
