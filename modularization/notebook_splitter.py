@@ -194,6 +194,15 @@ def split_notebook(notebook_path):
         "metadata": make_serializable(vars_dict)
     }
             """
+        else:
+            new_source += """
+    return {
+        "status": 200,
+        "body": {
+            "s3_urls": s3_urls
+        }
+    }
+            """
         
         cells.append({
             "name": cell_name,
