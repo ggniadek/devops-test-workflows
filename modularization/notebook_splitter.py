@@ -225,6 +225,8 @@ if __name__ == "__main__":
             for cell in cells:
                 lambda_archiver.make_lambda_archive(cell['name'], cell['code'], root_dir)
 
+            if not packages:
+                continue
             layer_name = f"{notebook_name}-layer"
             lambda_archiver.make_layer_archive(layer_name, packages, root_dir)
         else:
